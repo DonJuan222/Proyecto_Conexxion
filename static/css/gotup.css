@@ -1,0 +1,64 @@
+
+/* GOTOP */
+
+.go-top-container{
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    width: 2.2rem;
+    right: 2.2rem;
+    z-index: -1;
+}
+.go-top-button{
+    width: 0rem;
+    height: 0rem;
+    background: #404849;
+    border-radius: 50%;
+    cursor: pointer;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.go-top-button i{
+    position: absolute;
+    font-size: 1.7rem;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);scale: (0);
+    color: white;
+    transition: .7s;
+
+}
+
+.show{
+    z-index:10;
+}
+
+.show .go-top-button{
+    animation: popup .3s ease-in-out;
+    width: 3.3rem;
+    height: 3.3rem;
+    z-index: 11;
+
+}
+.show i{
+    transform: translate(-50%, -50%)scale(1);
+}
+
+@keyframes popup{
+    0%{
+       width: 0rem;
+       height: 0rem; 
+    }
+    50%{
+        width: 4rem;
+        height: 4rem;
+    }100%{
+        width: 3.3rem;
+        height: 3.3rem;
+    }
+
+
+}

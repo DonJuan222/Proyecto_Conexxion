@@ -1,0 +1,106 @@
+{% extends "comun/base.html" %}
+
+{% block content %}
+<article class="content forms-page">
+    <div class="title-block">
+        <h3 class="title">Factura numero #{{ factura.id }}</h3>
+        <p class="title-description">Datos de la factura seleccionada</p>
+    </div>
+    <section class="section">
+        <div class="row">
+
+            <div class="col-md-12">
+                <a class="dropdown-item" href="/listarFactura/{{ factura.id }}" class="btn btn-info btn-lg">
+                    <em class="fa fa-angle-left"></em>
+                    Volver a facturas
+                </a>
+            </div>
+
+            
+
+            <div class="col-xl-4">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="header-block">
+                            <p class="title">Cedula del cliente</p>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <p>{{factura.cliente.cedula}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="header-block">
+                            <p class="title">Nombre del Cliente</p>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <p>{{factura.cliente.nombre}} {{factura.cliente.apellido}}</p>
+                       
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="header-block">
+                            <p class="title">Fecha de creacion de la factura</p>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <p>{{factura.descripcion}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="header-block">
+                            <p class="title">Valor del Pago realizado</p>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <p>{{factura.valor_pago}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="header-block">
+                            <p class="title">Fecha de pago</p>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <p>{{factura.fecha_pago}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="header-block">
+                            <p class="title">Factura valida hasta</p>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <p>{{factura.fecha_vencimiento}}</p>
+                    </div>
+                </div>
+            </div>
+                <a href="/generarFacturaPDF/{{ factura.id}}" class="btn btn-secondary btn-lg"><em
+                        class="fa fa-print"></em>Generar PDF</a>
+            </div>
+
+        </div>
+    </section>
+</article>
+{% endblock %}

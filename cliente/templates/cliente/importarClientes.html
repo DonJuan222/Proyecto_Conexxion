@@ -1,0 +1,36 @@
+{% extends "comun/base.html" %}
+
+{% block content %}
+<article class="content forms-page">
+	    <div class="title-block">
+          <h3 class="title">Importar clientes</h3>
+          <p class="title-description">Ingrese una base de datos nueva</p>
+        </div>
+<section class="section">
+    <div class="row sameheight-container">
+	<div class="col-md-12">
+		{% if clientesImportados %}
+		 <div class="card card-primary">
+            <div class="card-header"> 
+            	<div class="header-block">
+            		<em class="fa fa-check"></em>
+                        <p class="title">Clientes actualizados exitosamente</p>
+                    </div>
+                </div>
+         </div>
+		{%endif%}
+
+		<div class="card card-block sameheight-item">
+			<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<input type="file" name="file">
+				<button type="submit">Importar</button>
+			  </form>
+			</form>
+		</div>
+	</div>
+	</div>
+</section>
+</article>
+{% endblock %}
+

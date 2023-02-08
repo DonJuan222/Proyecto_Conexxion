@@ -1,0 +1,91 @@
+                <aside class="sidebar">
+                    <div class="sidebar-container">
+                        <div class="sidebar-header">
+                            <div class="brand">
+                                
+                                <div class="logo-nuevo">
+                        {% load static %} 
+                        <img id="logo-endogeno" src="{% static 'assets/logo/logo2.png' %}">
+                                </div>Conexxion Wifi</div>
+                        </div>
+
+                        <nav class="menu">
+                            <ul class="sidebar-menu metismenu" id="sidebar-menu">
+                                <li>
+                                    <a href="/">
+                                        <i class="fa fa-home"></i> Inicio </a>
+                                </li>
+                                
+                                <!-- Sub-menu de clientes-->
+                                <li>
+                                    <a href="">
+                                        <i class="fa fa-handshake-o"></i>Clientes
+                                        <i class="fa arrow"></i>
+                                    </a>
+                                    <ul class="sidebar-nav">
+
+           <li><a href="/listarClientes"><i class="fa fa-ellipsis-h"></i>Listar clientes</a></li>                            
+            <li><a href="/agregarCliente"><i class="fa fa-plus"></i>Agregar cliente</a></li>
+ 
+                                    </ul>
+                                </li>
+                                <!-- Fin de sub-menu de clientes -->
+
+                                
+                                <!-- Sub-menu de Radios-->
+                                <li>
+                                    <a href="">
+                                        <i class="fa fa-wifi"></i>Radios
+                                        <i class="fa arrow"></i>
+                                    </a>
+                                    <ul class="sidebar-nav">
+            <li><a href="#"><i class="fa fa-ellipsis-h"></i>Listar </a></li>
+            <li><a href="#"><i class="fa fa-plus"></i>Agregar </a></li>
+
+                                    </ul>
+                                </li>
+                                <!-- Fin de sub-menu de Radios -->
+                                
+                                <!-- Sub-menu de usuarios -->
+                                <li>
+                                    <a href="">
+                                        <i class="fa fa-users"></i> Usuarios
+                                        <i class="fa arrow"></i>
+                                    </a>
+                                    <ul class="sidebar-nav">
+            <li><a href="/crearUsuario"><i class="fa fa-circle-o"></i>Crear usuario</a></li>
+            <li><a href="/listarUsuarios"><i class="fa fa-circle-o"></i>Listar usuarios</a></li>                                 </ul>
+                                </li>
+                                <!--Fin de sub-menu de usuarios -->                              
+
+                                <!-- Sub-menu de manual de usuario-->
+
+                                <li>
+                                    <a href="">
+                                        <i class="fa fa-book"></i> Manual de usuario
+                                        <i class="fa arrow"></i>
+                                    </a>
+                                    <ul class="sidebar-nav">
+                                
+                                    {% load static %}
+                                    <!--
+                                <li>
+                                    <a href="{% static 'inventario/manual.pdf' %}" download>
+                                        <i class="fa fa-download"></i> Descargar manual de usuario (PDF)
+                                        
+                                    </a>
+                                </li>
+                            -->
+
+            <li><a href="/verManualDeUsuario/inicio"><i class="fa fa-eye"></i>Ver manual de usuario</a></li>
+
+                                    </ul>
+                                </li>
+
+                                 <!--Fin de sub-menu de manual de usuario -->
+
+                                  <!-- -->
+                            </ul>
+                        </nav>
+                    </div>
+                </aside>
