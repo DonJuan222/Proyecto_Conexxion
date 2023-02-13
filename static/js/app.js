@@ -1334,10 +1334,10 @@ $(function () {
 	function setThemeState() {
 		// set theme type
 		if (themeSettings.themeName) {
-			$styleLink.attr('href', '/static/inventario/css/app-' + themeSettings.themeName + '.css');
+			$styleLink.attr('href', '/static/css/app-' + themeSettings.themeName + '.css');
 		}
 		else {
-			$styleLink.attr('href', '/static/inventario/css/app.css');
+			$styleLink.attr('href', '/static/css/app.css');
 		}
 
 		// App classes

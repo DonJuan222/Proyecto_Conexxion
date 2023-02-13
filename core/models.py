@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractUser
 
 #--------------------------------USUARIO------------------------------------------------
 class Usuario(AbstractUser):
-
     username = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
@@ -23,6 +22,4 @@ class Usuario(AbstractUser):
             return int(self.objects.filter(is_superuser = True).count() )
         elif tipo == 'usuario':
             return int(self.objects.filter(is_superuser = False).count() )
-
-
 #---------------------------------------------------------------------------------------

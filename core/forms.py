@@ -14,7 +14,7 @@ class UsuarioFormulario(forms.Form):
 
     username = forms.CharField(
         label = "Nombre de usuario",
-        max_length=50,
+        max_length=100,
         widget = forms.TextInput(attrs={'placeholder': 'Inserte un nombre de usuario',
         'id':'username','class':'form-control','value':''} ),
         )
@@ -53,7 +53,7 @@ class NuevoUsuarioFormulario(forms.Form):
 
     username = forms.CharField(
         label = "Nombre de usuario",
-        max_length=50,
+        max_length=100,
         widget = forms.TextInput(attrs={'placeholder': 'Inserte un nombre de usuario',
         'id':'username','class':'form-control','value':''} ),
         )

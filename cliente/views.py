@@ -38,6 +38,22 @@ class ListarClientes(LoginRequiredMixin, View):
 # Fin de vista--------------------------------------------------------------------------#
 
 
+# Crea una lista de los clientes, 10 por pagina----------------------------------------#
+class ListarClientesRetirados(LoginRequiredMixin, View):
+    login_url = '/login'
+    redirect_field_name = None
+
+    def get(self, request):
+        from django.db import models
+        # Saca una lista de todos los clientes de la BDD
+        clientes_retirados = ClienteRetirado.objects.all()
+        contexto = {'tabla': clientes_retirados}
+        contexto = complementarContexto(contexto, request.user)
+
+        return render(request, 'cliente/retiroCliente.html', contexto)
+# Fin de vista--------------------------------------------------------------------------#
+
+
 # Crea y procesa un formulario para agregar a un cliente---------------------------------#
 class AgregarCliente(LoginRequiredMixin, View):
     login_url = '/login'
@@ -59,15 +75,17 @@ class AgregarCliente(LoginRequiredMixin, View):
             mensualidad = form.cleaned_data['mensualidad']
             fecha_instalacion = form.cleaned_data['fecha_instalacion']
             direccion = form.cleaned_data['direccion']
-            tipo_instalacion = form.cleaned_data['tipo_instalacion']
-            status = form.cleaned_data['status']
+            estado = form.cleaned_data['estado']
             descripcion = form.cleaned_data['descripcion']
-            id_Estado = form.cleaned_data['id_Estado']
+            municipio = form.cleaned_data['municipio']
+            equipos = form.cleaned_data['equipos']         
+            tipo_instalacion = form.cleaned_data['tipo_instalacion']  
+            cap_megas = form.cleaned_data['cap_megas']           
 
             cliente = Cliente(ip=ip, cedula=cedula, nombre=nombre, apellido=apellido, telefono_uno=telefono_uno,
                               telefonos_dos=telefonos_dos, mensualidad=mensualidad, fecha_instalacion=fecha_instalacion,
-                              direccion=direccion, tipo_instalacion=tipo_instalacion,
-                              status=status, descripcion=descripcion,id_Estado=id_Estado)
+                              direccion=direccion,estado=estado,municipio=municipio, tipo_instalacion=tipo_instalacion,
+                              descripcion=descripcion,equipos=equipos,cap_megas=cap_megas)
             cliente.save()
             form = ClienteFormulario()
 
@@ -113,12 +131,12 @@ class EditarCliente(LoginRequiredMixin, View):
             mensualidad = form.cleaned_data['mensualidad']
             fecha_instalacion = form.cleaned_data['fecha_instalacion']
             direccion = form.cleaned_data['direccion']
-       
-            tipo_instalacion = form.cleaned_data['tipo_instalacion']
-            status = form.cleaned_data['status']
+            estado = form.cleaned_data['estado']
             descripcion = form.cleaned_data['descripcion']
-           
-            id_Estado = form.cleaned_data['id_Estado']
+            municipio = form.cleaned_data['municipio']
+            equipos = form.cleaned_data['equipos']         
+            tipo_instalacion = form.cleaned_data['tipo_instalacion']  
+            cap_megas = form.cleaned_data['cap_megas']  
 
             cliente.ip = ip
             cliente.cedula = cedula
@@ -129,12 +147,13 @@ class EditarCliente(LoginRequiredMixin, View):
             cliente.mensualidad = mensualidad
             cliente.fecha_instalacion = fecha_instalacion
             cliente.direccion = direccion
-     
-            cliente.tipo_instalacion = tipo_instalacion
-            cliente.status = status
+            cliente.estado = estado
             cliente.descripcion = descripcion
-          
-            cliente.id_Estado = id_Estado
+            cliente.municipio = municipio
+            cliente.equipos = equipos
+            cliente.tipo_instalacion = tipo_instalacion
+            cliente.cap_megas = cap_megas
+            
             cliente.save()
             form = ClienteFormulario(instance=cliente)
 
@@ -201,13 +220,30 @@ class Eliminar(LoginRequiredMixin, View):
     redirect_field_name = None
 
     def get(self, request, modo, p):
-
         if modo == 'cliente':
             cliente = Cliente.objects.get(id=p)
+            cliente_retirado = ClienteRetirado(
+                ip=cliente.ip,
+                cedula=cliente.cedula,
+                nombre=cliente.nombre,
+                apellido=cliente.apellido,
+                telefono_uno=cliente.telefono_uno,
+                telefonos_dos=cliente.telefonos_dos,
+                mensualidad=cliente.mensualidad,
+                fecha_instalacion=cliente.fecha_instalacion,
+                direccion=cliente.direccion,
+                estado=cliente.estado,
+                descripcion=cliente.descripcion,
+                municipio=cliente.municipio,
+                equipos=cliente.equipos,
+                tipo_instalacion=cliente.tipo_instalacion,
+                cap_megas=cliente.cap_megas
+            )
+            cliente_retirado.save()
             cliente.delete()
             messages.success(
-                request, 'Cliente de ID %s borrado exitosamente.' % p)
-            return HttpResponseRedirect("/listarClientes")
+                request, 'Cliente de ID %s movido a clientes retirados exitosamente.' % p)
+            return HttpResponseRedirect("/listarClientesRetirados")
 
         elif modo == 'usuario':
             if request.user.is_superuser == False:
@@ -279,36 +315,36 @@ class VerFactura(LoginRequiredMixin,View):
 #Fin de vista--------------------------------------------------------------------------------------#   
 
 
-#Genera la factura en PDF--------------------------------------------------------------------------#
-class GenerarFacturaPDF(LoginRequiredMixin,View):
-    redirect_field_name = None
+# #Genera la factura en PDF--------------------------------------------------------------------------#
+# class GenerarFacturaPDF(LoginRequiredMixin,View):
+#     redirect_field_name = None
 
-    def get(self, request, p):
-        import io
-        from reportlab.pdfgen import canvas
-        from django.http import FileResponse
-        import datetime
+#     def get(self, request, p):
+#         import io
+#         from reportlab.pdfgen import canvas
+#         from django.http import FileResponse
+#         import datetime
         
 
-        factura = Factura.objects.get(id=p)       
-        data = { 
-            'ip': factura.cliente.ip,
-            'nombre_cliente': factura.cliente.nombre + " " + factura.cliente.apellido,
-            'cedula_cliente': factura.cliente.cedula,
-            'detalle': factura.descripcion,
-            'valor_pago': factura.valor_pago,
-            'fecha': factura.fecha_pago,
-            'valido_hasta': factura.fecha_vencimiento,
+#         factura = Factura.obj69ects.get(id=p)       
+#         data = { 
+#             'ip': factura.cliente.ip,
+#             'nombre_cliente': factura.cliente.nombre + " " + factura.cliente.apellido,
+#             'cedula_cliente': factura.cliente.cedula,
+#             'detalle': factura.detalle,
+#             'valor_pago': factura.valor_pago,
+#             'fecha': factura.fecha_pago,
+#             'valido_hasta': factura.fecha_vencimiento,
             
-        }
+#         }
 
-        nombre_factura = "factura_%s.pdf" % (factura.id)
+#         nombre_factura = "factura_%s.pdf" % (factura.id)
 
-        pdf = render_to_pdf('PDF/prueba.html', data)
-        response = HttpResponse(pdf,content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="%s"' % nombre_factura
+#         pdf = render_to_pdf('PDF/prueba.html', data)
+#         response = HttpResponse(pdf,content_type='application/pdf')
+#         response['Content-Disposition'] = 'attachment; filename="%s"' % nombre_factura
 
-        return response  
+#         return response  
 
-#Fin de vista--------------------------------------------------------------------------------------#
+# #Fin de vista--------------------------------------------------------------------------------------#
 
