@@ -22,7 +22,7 @@ from django.forms import formset_factory
 from django.contrib.auth.decorators import login_required
 
 
-# Crea una lista de los clientes, 10 por pagina----------------------------------------#
+# Crea una lista de los clientes, 10 por pagina------------------------------------------------------
 class ListarClientes(LoginRequiredMixin, View):
     login_url = '/login'
     redirect_field_name = None
@@ -35,10 +35,10 @@ class ListarClientes(LoginRequiredMixin, View):
         contexto = complementarContexto(contexto, request.user)
 
         return render(request, 'cliente/listarClientes.html', contexto)
-# Fin de vista--------------------------------------------------------------------------#
+# Fin de vista---------------------------------------------------------------------------------------
 
 
-# Crea una lista de los clientes, 10 por pagina----------------------------------------#
+# Crea una lista de los clientes, 10 por pagina------------------------------------------------------
 class ListarClientesRetirados(LoginRequiredMixin, View):
     login_url = '/login'
     redirect_field_name = None
@@ -51,10 +51,10 @@ class ListarClientesRetirados(LoginRequiredMixin, View):
         contexto = complementarContexto(contexto, request.user)
 
         return render(request, 'cliente/retiroCliente.html', contexto)
-# Fin de vista--------------------------------------------------------------------------#
+# Fin de vista---------------------------------------------------------------------------------------
 
 
-# Crea y procesa un formulario para agregar a un cliente---------------------------------#
+# Crea y procesa un formulario para agregar a un cliente---------------------------------------------
 class AgregarCliente(LoginRequiredMixin, View):
     login_url = '/login'
     redirect_field_name = None
@@ -106,10 +106,10 @@ class AgregarCliente(LoginRequiredMixin, View):
                     'modo': request.session.get('clienteProcesado')}
         contexto = complementarContexto(contexto, request.user)
         return render(request, 'cliente/agregarCliente.html', contexto)
-# Fin de vista-----------------------------------------------------------------------------#
+# Fin de vista---------------------------------------------------------------------------------------
 
 
-# Muestra el mismo formulario del cliente pero con los datos a editar----------------------#
+# Muestra el mismo formulario del cliente pero con los datos a editar--------------------------------
 class EditarCliente(LoginRequiredMixin, View):
     login_url = '/login'
     redirect_field_name = None
@@ -174,10 +174,10 @@ class EditarCliente(LoginRequiredMixin, View):
             'clienteProcesado'), 'editar': True}
         contexto = complementarContexto(contexto, request.user)
         return render(request, 'cliente/agregarCliente.html', contexto)
-# Fin de vista--------------------------------------------------------------------------------------#
+# Fin de vista---------------------------------------------------------------------------------------
 
 
-# # Funcion que permite importar un archivo csv y asi alimentar la base de datos----------------------#
+# # Funcion que permite importar un archivo csv y asi alimentar la base de datos---------------------
 # def import_clientes(request):
 #     if request.method == "POST":
 #         csv_file = request.FILES['file']
@@ -211,17 +211,18 @@ class EditarCliente(LoginRequiredMixin, View):
 #         messages.success(request, 'Archivo importado exitosamente!')
 #         return redirect("listarClientes")
 #     return render(request, "cliente/importarClientes.html")
-# # Fin de vista--------------------------------------------------------------------------------------#
+# # Fin de vista-------------------------------------------------------------------------------------
 
 
-# Elimina usuarios,clientes ----------------------------------------------------------------
+# Elimina usuarios,clientes -------------------------------------------------------------------------
 class Eliminar(LoginRequiredMixin, View):
     login_url = '/login'
     redirect_field_name = None
-
+ 
     def get(self, request, modo, p):
         if modo == 'cliente':
             cliente = Cliente.objects.get(id=p)
+            # Mover el cliente a ClienteRetirado
             cliente_retirado = ClienteRetirado(
                 ip=cliente.ip,
                 cedula=cliente.cedula,
@@ -240,11 +241,28 @@ class Eliminar(LoginRequiredMixin, View):
                 cap_megas=cliente.cap_megas
             )
             cliente_retirado.save()
+
+            # Mover las facturas del cliente a FacturaRetirada
+            facturas = Factura.objects.filter(cliente=cliente)
+            for factura in facturas:
+                factura_retirada = FacturaRetirada(
+                    cliente_retirado=cliente_retirado,
+                    detalle=factura.detalle,
+                    tipo_pago=factura.tipo_pago,
+                    valor_pago=factura.valor_pago,
+                    fecha_pago=factura.fecha_pago,
+                    fecha_vencimiento=factura.fecha_vencimiento
+                )
+                factura_retirada.save()
+
+            # Eliminar el cliente original y sus facturas
+            facturas.delete()
             cliente.delete()
+
             messages.success(
                 request, 'Cliente de ID %s movido a clientes retirados exitosamente.' % p)
             return HttpResponseRedirect("/listarClientesRetirados")
-
+        
         elif modo == 'usuario':
             if request.user.is_superuser == False:
                 messages.error(
@@ -267,24 +285,68 @@ class Eliminar(LoginRequiredMixin, View):
                 messages.success(
                     request, 'Usuario de ID %s borrado exitosamente.' % p)
                 return HttpResponseRedirect("/listarUsuarios")
+# Fin de vista---------------------------------------------------------------------------------------
 
 
-# Fin de vista-------------------------------------------------------------------
+# Eliminar Clientes Retirados  ----------------------------------------------------------------------
+class EliminarClienteRetirado(LoginRequiredMixin, View):
+    login_url = '/login'
+    redirect_field_name = None
+
+    def get(self, request, modo, p):
+        if modo == 'cliente_retirado':
+            cliente_retirado = ClienteRetirado.objects.get(id=p)
+            cliente = Cliente.objects.create(
+                ip=cliente_retirado.ip,
+                cedula=cliente_retirado.cedula,
+                nombre=cliente_retirado.nombre,
+                apellido=cliente_retirado.apellido,
+                telefono_uno=cliente_retirado.telefono_uno,
+                telefonos_dos=cliente_retirado.telefonos_dos,
+                mensualidad=cliente_retirado.mensualidad,
+                fecha_instalacion=cliente_retirado.fecha_instalacion,
+                direccion=cliente_retirado.direccion,
+                estado=cliente_retirado.estado,
+                descripcion=cliente_retirado.descripcion,
+                municipio=cliente_retirado.municipio,
+                equipos=cliente_retirado.equipos,
+                tipo_instalacion=cliente_retirado.tipo_instalacion,
+                cap_megas=cliente_retirado.cap_megas
+            )
+            cliente_retirado.delete()
+            messages.success(
+                request, 'Cliente Retirado de ID %s movido a Clientes exitosamente.' % p)
+
+            return redirect('listarClientes')
+
+# Fin de vista---------------------------------------------------------------------------------------
 
 
-# Crea una lista de la factura, 10 por pagina----------------------------------------#
+# Crea una lista de la factura, 10 por pagina--------------------------------------------------------
 class ListarFactura(LoginRequiredMixin,View):
 
-    def get(self, request, factura_id):
-        cliente = Cliente.objects.get(id=factura_id)
+    def get(self, request, cliente_id):
+        cliente = Cliente.objects.get(id=cliente_id)
         facturas = Factura.objects.filter(cliente=cliente)
         context = {'facturas': facturas}
         return render(request, 'factura/listarFacturas.html', context)
 
-# Fin de vista--------------------------------------------------------------------------#
+# Fin de vista---------------------------------------------------------------------------------------
 
 
-# Funcion que permite crear la factura de un cliente por su ID------------------------------------------------#
+# Crea una lista de la factura, 10 por pagina--------------------------------------------------------
+class ListarFacturaRetirada(LoginRequiredMixin,View):
+
+    def get(self, request, id):
+        cliente_retirado = ClienteRetirado.objects.get(id=id)
+        factura_retirada = FacturaRetirada.objects.filter(cliente_retirado=cliente_retirado)
+        contexto = {'factura_retirada': factura_retirada}
+        return render(request, 'factura/listarFacturaRetirada.html', contexto)
+
+# Fin de vista---------------------------------------------------------------------------------------
+
+
+# Funcion que permite crear la factura de un cliente por su ID---------------------------------------
 
 def crear_factura(request, cliente_id):
     cliente = Cliente.objects.get(id=cliente_id)
@@ -299,10 +361,10 @@ def crear_factura(request, cliente_id):
         form = FacturaForm()
     return render(request, 'factura/emitirfactura.html', {'form': form})
 
-# Fin de vista----------------------------------------------------------------------#
+# Fin de vista---------------------------------------------------------------------------------------
 
 
-#Muestra los detalles individuales de una factura------------------------------------------------#
+#Muestra los detalles individuales de una factura----------------------------------------------------
 class VerFactura(LoginRequiredMixin,View):
     def get(self, request, p):
         try:
@@ -312,10 +374,10 @@ class VerFactura(LoginRequiredMixin,View):
 
         context = {'factura': factura}
         return render(request, 'factura/verFactura.html', context)
-#Fin de vista--------------------------------------------------------------------------------------#   
+#Fin de vista----------------------------------------------------------------------------------------
 
 
-# #Genera la factura en PDF--------------------------------------------------------------------------#
+# #Genera la factura en PDF--------------------------------------------------------------------------
 # class GenerarFacturaPDF(LoginRequiredMixin,View):
 #     redirect_field_name = None
 
@@ -346,5 +408,5 @@ class VerFactura(LoginRequiredMixin,View):
 
 #         return response  
 
-# #Fin de vista--------------------------------------------------------------------------------------#
+# #Fin de vista--------------------------------------------------------------------------------------
 

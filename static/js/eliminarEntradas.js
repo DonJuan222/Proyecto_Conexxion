@@ -6,3 +6,5 @@ function eliminarEntrada(idEntrada, modo)
     borrar.href = "/eliminar/" + modo + "/" + idEntrada
 
 } 
+
+

@@ -4,7 +4,7 @@
 
 <!-- NO MODIFICAR ---------------------------------->
 {% load static %}
-<script src='{% static "js/eliminarEntradas.js" %}'></script>
+<script src='{% static "js/eliminarRetirados.js" %}'></script>
 <!-- FIN DE JAVASCRIPT ------------------------------------>
 
 
@@ -95,18 +95,13 @@
                                                             aria-expanded="false"><i class="fa fa-wrench"></i></button>
 
                                                         <div class="dropdown-menu">
+                                                            
                                                             <a class="dropdown-item"
-                                                                href="/editarCliente/{{ fila.id}}">Editar Cliente</a>
+                                                                href="/FacturaRetirada/{{ fila.id}}">Listar Facturas</a>
                                                             <div class="dropdown-divider"></div>
                                                             <a class="dropdown-item"
-                                                                href="/crear_factura/{{ fila.id}}">Crear Factura</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item"
-                                                                href="/listarFactura/{{ fila.id}}">Listar Facturas</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item"
-                                                                onclick="eliminarEntrada( {{fila.id}},'cliente' )">Eliminar
-                                                                Cliente</a>
+                                                                onclick="eliminarRetirados( {{fila.id}},'cliente_retirado' )">Eliminar
+                                                                Cliente Retirado</a>
                                                         </div>
                                                     </div>
                                                 </td>

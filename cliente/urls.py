@@ -11,13 +11,14 @@ urlpatterns = [
     # path('exportarClientes', views.ExportarClientes.as_view(), name='exportarClientes'),
     path('editarCliente/<int:p>', views.EditarCliente.as_view(), name='editarCliente'),
     path('eliminar/<str:modo>/<int:p>', views.Eliminar.as_view(), name='eliminar'),
+    path('eliminar_retirado/<str:modo>/<int:p>', views.EliminarClienteRetirado.as_view(), name='eliminar'),
         
-    path('listarFactura/<int:factura_id>/', views.ListarFactura.as_view(), name='listarFactura'),
-    path('crear_factura/<int:cliente_id>/',crear_factura , name='crear_factura'),
-    path('verFactura/<int:p>',views.VerFactura.as_view(), name='verFactura'),
+    path('listarFactura/<int:cliente_id>/', views.ListarFactura.as_view(), name='listarFactura'),
+    path('FacturaRetirada/<int:id>/', views.ListarFacturaRetirada.as_view(), name='FacturaRetirada'),
+    path('crear_factura/<int:cliente_id>/',crear_factura),
+    path('verFactura/<int:p>',views.VerFactura.as_view()),
     # path('generarFacturaPDF/<int:p>',views.GenerarFacturaPDF.as_view(), name='generarFacturaPDF'),
     path('listarClientesRetirados', views.ListarClientesRetirados.as_view(), name='listarClientesRetirados'),
-
 
 ]
 

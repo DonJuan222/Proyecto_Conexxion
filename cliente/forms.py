@@ -27,12 +27,13 @@ class ClienteFormulario(forms.ModelForm):
         'mensualidad': 'Mensualidad cliente',
         'fecha_instalacion': 'Fecha de instalacion del cliente',
         'direccion': 'Dirección',
-        'estado': 'Estado del Cliente',
+        
         'descripcion': 'Detalles',
-        'municipio': 'Municipio',
-        'equipos': 'Equipos o Estado',
+        'municipio': 'Municipio de Residencia',
+        'equipos': 'Equipos',
         'tipo_instalacion': 'Tipo de Instalacion',
-        'cap_megas': 'Capacidad de Megas',
+        'cap_megas': 'Megas contratadas',
+        
         }
         widgets = {
     
@@ -45,9 +46,9 @@ class ClienteFormulario(forms.ModelForm):
         'mensualidad': forms.TextInput(attrs={'class':'form-control','id':'mensualidad','placeholder':'Mensualidad del cliente'}),                                                                                                     
         'fecha_instalacion':forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_instalacion','class':'form-control','type':'date'} ),
         'direccion': forms.TextInput(attrs={'class':'form-control','id':'direccion','placeholder':'Direccion del cliente'}),                                                                       
-        'tipo_instalacion': forms.TextInput(attrs={'class':'form-control','id':'tipo_instalacion','placeholder':'Tipo de instalacion'}),                                                                       
-        'descripcion': forms.TextInput(attrs={'class':'form-control','id':'descripcion','placeholder':'Descripcion'}), 
-           
+        
+        'descripcion': forms.TextInput(attrs={'class':'form-control','id':'descripcion','placeholder':'Direccion del cliente'}),
+        
         }
 
 class FacturaForm(forms.ModelForm):
@@ -64,8 +65,6 @@ class FacturaForm(forms.ModelForm):
         }
         widgets = {
     
-        'descripcion': forms.TextInput(attrs={'placeholder': 'Inserte el detalle de la factura','id':'ip','class':'form-control'} ),
-        'valor_pago': forms.TextInput(attrs={'placeholder': 'Inserte el valor de pago','id':'cedula','class':'form-control'} ),
         'fecha_pago': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_pago','class':'form-control','type':'date'} ),
         'fecha_vencimiento': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_vencimiento','class':'form-control','type':'date'} ),
 
