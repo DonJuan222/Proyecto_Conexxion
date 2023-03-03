@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'cliente',
-
     'import_export',
 
 ]
@@ -85,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'conexxion_wifi',
         'USER': 'root',
-        'PASSWORD': 'SENAsamaria12',
+        'PASSWORD': '150346Dkt810',
         'HOST': '127.0.0.1',
         'PORT': '3306',
 

@@ -57,11 +57,23 @@ let numeroUsuarios = '{{ usuarios }}'
                                             
                                             <div class="col-12 col-sm-6  stat-col">
                                                 <div class="stat-icon">
-                                                    <i class="fa fa-line-chart"></i>
+                                                    <i class="fa fa-address-book"></i>
                                                 </div>
                                                 <div class="stat">
                                                     <div class="value">{{ clientesRegistrados }}</div>
                                                     <div class="name">Clientes registrados</div>
+                                                </div>
+                                                <div class="progress stat-progress">
+                                                    <div class="progress-bar" style="width: 100%;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-sm-6  stat-col">
+                                                <div class="stat-icon">
+                                                    <i class="fa fa-user-times"></i>
+                                                </div>
+                                                <div class="stat">
+                                                    <div class="value">{{ clientesRetirados }}</div>
+                                                    <div class="name">Clientes Retirados</div>
                                                 </div>
                                                 <div class="progress stat-progress">
                                                     <div class="progress-bar" style="width: 100%;"></div>
@@ -84,8 +96,8 @@ let numeroUsuarios = '{{ usuarios }}'
                                                     <i class="fa fa-list-alt"></i>
                                                 </div>
                                                 <div class="stat">
-                                                    <div class="value">{{ facturasEmitidas }}</div>
-                                                    <div class="name">Facturas emitidas</div>
+                                                    <div class="value">{{ facturasRegistradas }}</div>
+                                                    <div class="name">Facturas Registradas</div>
                                                 </div>
                                                 <div class="progress stat-progress">
                                                     <div class="progress-bar" style="width: 100%;"></div>

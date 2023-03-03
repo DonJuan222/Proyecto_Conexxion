@@ -77,6 +77,8 @@ class Panel(LoginRequiredMixin, View):
                     'fecha':  date.today(),
                     'usuariosRegistrados': Usuario.numeroRegistrados(),
                     'clientesRegistrados': Cliente.numeroRegistrados(),
+                    'clientesRetirados': ClienteRetirado.numeroRetirados(),
+                    'facturasRegistradas': Factura.facturasRegistradas(),
                     'administradores': Usuario.numeroUsuarios('administrador'),
                     'usuarios': Usuario.numeroUsuarios('usuario')
                     }

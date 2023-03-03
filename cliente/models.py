@@ -155,6 +155,11 @@ class ClienteRetirado(models.Model):
         verbose_name = 'Cliente_Retirado'
         verbose_name_plural = 'Clientes_Retirados'
 
+    @classmethod
+    def numeroRetirados(self):
+        return int(self.objects.all().count())
+
+
 
 # ---------------------------------------------------------------------------------------------------
 # -------------------------------------FIN DEL APARTADO CLIENTE--------------------------------------
@@ -208,6 +213,10 @@ class Factura(models.Model):
     valor_pago = models.CharField(max_length=15, null=True, blank=True)
     fecha_pago = models.DateField(null=True, blank=True)
     fecha_vencimiento = models.DateField(null=True, blank=True)
+    
+    @classmethod
+    def facturasRegistradas(self):
+        return int(self.objects.all().count() )   
 
 # ---------------------------------------------------------------------------------------------------
 
