@@ -1,0 +1,116 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <style type="text/css">
+            body {
+                font-weight: 200;
+                font-size: 14px;
+            }
+            
+            .title {
+                font-size: 22px;
+                font-weight: 100;
+               /* text-align: right;*/
+               padding: 10px 20px 0px 20px;  
+            }
+            .title span {
+                color: #007cae;
+            }
+            p{
+                text-align: center;
+            }
+            
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                    }   
+
+            th, td {
+                text-align: left;
+                padding: 8px;
+                    }
+
+            tr:nth-child(even){background-color: #f2f2f2}
+
+            th,tfoot {
+                background-color: #363636;
+                color: white;
+                }
+        </style>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4 text-right">     
+                <img class="logo-endogeno" src="https://raw.githubusercontent.com/DonJuan222/Imagenes/main/logo2.png" width="190" height="150" alt="Logotipo">
+            </div>
+        </div>
+    </div>
+    
+        <hr>
+        <div class="row">
+            <div class="col-xs-10">
+                <h2>FACTURA</h2>
+                
+            </div>
+            <div class="col-xs-2 text-center">
+        
+                Conexxion Wifi
+                <br>
+                Calle 2 # 10-46 Santander de Quilichao
+                <br>
+                {% for data in datos %}
+                {{ data.fecha }} <br>
+                <strong>Factura No.</strong>
+                {{ factura.id }}
+                <br>
+                {% endfor %}
+                
+            </div>
+        </div>
+        <hr>
+        <div class="row text-center">
+            <div class="col-xs-6">
+                <h2>Cliente</h2>
+    
+                {% for data in datos %}
+                {{ data.nombre }} {{ data.apellido }}
+                {% endfor %}
+            </div>
+        </div>
+        <hr>
+        <h2>Datos</h2>
+
+        <table class="table table-condensed table-bordered table-striped">
+            <tr>
+              <th><strong>Cedula</strong></th>
+              <th><strong>Detalles</strong></th>
+              <th><strong>Valor de Pago</strong></th>
+              <th><strong>Fecha de Pago</strong></th>
+              <th><strong>Pago valido hasta</strong></th>
+          
+            </tr>
+              {% for data in datos %}
+          <tr>
+              <td>{{ data.cedula }}</td>
+              <td>{{ data.detalle }}</td>
+              <td>{{ data.valor_pago }}</td>
+              <td>{{ data.fecha }}</td>
+              <td>{{ data.valido_hasta }}</td>
+          </tr>
+              {% endfor %}
+          
+          </table>
+          
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+                <p>Gracias por confiar en nosotros!</p>
+        </div>
+    </div>
+</body>
+
+</html>

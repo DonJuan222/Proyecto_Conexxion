@@ -185,8 +185,7 @@ class Detalle(models.Model):
 
 # ---------------------------------------------------------------------------------------------------
 
-
-# ------------------------------------------Detalle--------------------------------------------------
+# ------------------------------------------TIPO PAGO--------------------------------------------------
 class Tipo_Pago(models.Model):
     tipo_pago = models.CharField(max_length=15, null=False)
 
@@ -211,8 +210,8 @@ class Factura(models.Model):
     detalle = models.ForeignKey(Detalle, on_delete=models.SET_NULL, null=True)
     tipo_pago = models.ForeignKey(Tipo_Pago, on_delete=models.SET_NULL, null=True)
     valor_pago = models.CharField(max_length=15, null=True, blank=True)
-    fecha_pago = models.DateField(null=True, blank=True)
-    fecha_vencimiento = models.DateField(null=True, blank=True)
+    fecha_pago = models.DateField(null=True, blank=True, verbose_name='Fecha de pago (Opcional)')
+    fecha_vencimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de vencimiento (Opcional)')
     
     @classmethod
     def facturasRegistradas(self):
@@ -223,12 +222,14 @@ class Factura(models.Model):
 
 # -------------------------------------FACTURA RETIRADA-------------------------------------------------------
 class FacturaRetirada(models.Model):
-    cliente_retirado = models.ForeignKey(ClienteRetirado, on_delete=models.SET_NULL, null=True)
+
+    cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     detalle = models.ForeignKey(Detalle, on_delete=models.SET_NULL, null=True)
     tipo_pago = models.ForeignKey(Tipo_Pago, on_delete=models.SET_NULL, null=True)
     valor_pago = models.CharField(max_length=15, null=True, blank=True)
-    fecha_pago = models.DateField(null=True, blank=True)
-    fecha_vencimiento = models.DateField(null=True, blank=True)
+    fecha_pago = models.DateField(null=True, blank=True, verbose_name='Fecha de pago (Opcional)',)
+    fecha_vencimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de vencimiento (Opcional)',)
+    
 
 # ---------------------------------------------------------------------------------------------------
 # -------------------------------------FIN DEL APARTADO FACTURA--------------------------------------

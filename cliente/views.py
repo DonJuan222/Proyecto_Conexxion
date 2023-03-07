@@ -350,6 +350,7 @@ class ListarFacturaRetirada(LoginRequiredMixin,View):
 
 def crear_factura(request, cliente_id):
     cliente = Cliente.objects.get(id=cliente_id)
+    mostrar_campos_fechas = False  # variable para indicar si los campos deben mostrarse o no
     if request.method == 'POST':
         form = FacturaForm(request.POST)
         if form.is_valid():
@@ -359,7 +360,14 @@ def crear_factura(request, cliente_id):
             return redirect('listarFactura', cliente.id)
     else:
         form = FacturaForm()
-    return render(request, 'factura/emitirfactura.html', {'form': form})
+    
+    # verificar si el tipo de pago es mensualidad
+    tipo_pago = request.POST.get('tipo_pago', None)  # obtener el tipo de pago enviado en el formulario
+    if tipo_pago == 'Mensualidad':
+        mostrar_campos_fechas = True  # mostrar campos de fecha de pago y vencimiento si el tipo de pago es mensualidad
+
+    context = {'form': form, 'mostrar_campos_fechas': mostrar_campos_fechas}
+    return render(request, 'factura/emitirfactura.html', context)
 
 # Fin de vista---------------------------------------------------------------------------------------
 
@@ -377,36 +385,35 @@ class VerFactura(LoginRequiredMixin,View):
 #Fin de vista----------------------------------------------------------------------------------------
 
 
-# #Genera la factura en PDF--------------------------------------------------------------------------
-# class GenerarFacturaPDF(LoginRequiredMixin,View):
-#     redirect_field_name = None
+#Genera la factura en PDF--------------------------------------------------------------------------
+class GenerarFacturaPDF(LoginRequiredMixin,View):
+    redirect_field_name = None
 
-#     def get(self, request, p):
-#         import io
-#         from reportlab.pdfgen import canvas
-#         from django.http import FileResponse
-#         import datetime
-        
+    def get(self, request, p):
+        import io
+        from reportlab.pdfgen import canvas
+        from django.http import FileResponse
+        from datetime import date  
 
-#         factura = Factura.obj69ects.get(id=p)       
-#         data = { 
-#             'ip': factura.cliente.ip,
-#             'nombre_cliente': factura.cliente.nombre + " " + factura.cliente.apellido,
-#             'cedula_cliente': factura.cliente.cedula,
-#             'detalle': factura.detalle,
-#             'valor_pago': factura.valor_pago,
-#             'fecha': factura.fecha_pago,
-#             'valido_hasta': factura.fecha_vencimiento,
-            
-#         }
+        factura = Factura.objects.get(id=p)       
+        data = { 
+            'nombre':factura.cliente.nombre,
+            'apellido': factura.cliente.apellido,
+            'cedula': factura.cliente.cedula,
+            'detalle': factura.detalle,
+            'valor_pago': factura.valor_pago,
+            'fecha': factura.fecha_pago,
+            'valido_hasta': factura.fecha_vencimiento,
+            'fecha':  date.today(),
+        }
+        nombre_factura = "factura_%s.pdf" % (factura.id)
 
-#         nombre_factura = "factura_%s.pdf" % (factura.id)
+        pdf = render_to_pdf('PDF/plantillaPDF.html', {'datos': [data]})
 
-#         pdf = render_to_pdf('PDF/prueba.html', data)
-#         response = HttpResponse(pdf,content_type='application/pdf')
-#         response['Content-Disposition'] = 'attachment; filename="%s"' % nombre_factura
+        response = HttpResponse(pdf,content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % nombre_factura
 
-#         return response  
+        return response  
 
-# #Fin de vista--------------------------------------------------------------------------------------
+#Fin de vista--------------------------------------------------------------------------------------
 

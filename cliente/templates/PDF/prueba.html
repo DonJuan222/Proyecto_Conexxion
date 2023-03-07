@@ -75,9 +75,14 @@
         </style>
     </head>
     <body>
+        {% load static %} 
+        <img src="{% static 'assets/logo/logo2.png' %}">
         <div class='wrapper'>
+            
             <div id="negocio_nombre">
                 <h1>Conexxion Wifi 2023</h1>
+                
+
             </div>
         </div>
 
@@ -85,25 +90,26 @@
 
 <table>
   <tr>
-    <th><strong>Detalles</strong></th>
     <th><strong>Nombre</strong></th>
     <th><strong>Apellido</strong></th>
+    <th><strong>Cedula</strong></th>
+    <th><strong>Detalles</strong></th>
     <th><strong>Valor de Pago</strong></th>
     <th><strong>Fecha de Pago</strong></th>
     <th><strong>Pago valido hasta</strong></th>
 
   </tr>
-  {% for factura in facturas %}
-  <tr>
-    <td>{{ factura.descripcion }}</td>
-    <td>{{ factura.cliente.nombre }}</td>
-    <td>{{ factura.cliente.apellido }}</td>
-    <td>{{ factura.valor_pago }}</td>
-    <td>{{ factura.fecha_pago }}</td>
-    <td>{{ factura.fecha_vencimiento }}</td>
-
-  </tr>
-  {% endfor %}
+    {% for data in datos %}
+<tr>
+    <td>{{ data.nombre }}</td>
+    <td>{{ data.apellido }}</td>
+    <td>{{ data.cedula }}</td>
+    <td>{{ data.detalle }}</td>
+    <td>{{ data.valor_pago }}</td>
+    <td>{{ data.fecha }}</td>
+    <td>{{ data.valido_hasta }}</td>
+</tr>
+    {% endfor %}
 
 </table>
 

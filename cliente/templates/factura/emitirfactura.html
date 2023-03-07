@@ -2,44 +2,60 @@
 
 {% block content %}
 <article class="content forms-page">
-	    <div class="title-block">
-          <h3 class="title">Emitir factura</h3>
-          <p class="title-description">Introduzca la cedula y el numero de
-          productos para generar los campos</p>
-        </div>
-<section class="section">
-    <div class="row sameheight-container">
-	<div class="col-md-12">
-		          {% if messages %}
-                  {% for message in messages %}
-                  	         <div class="card card-primary">
-            <div class="card-header"> 
-                <div class="header-block">
-                    <em class="fa fa-check"></em>
-                        <p class="title">{{ message }}</p>
+    <div class="title-block">
+        <h3 class="title">Emitir factura</h3>
+    </div>
+    <section class="section">
+        <div class="row sameheight-container">
+            <div class="col-md-12">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="header-block">
+                            <em class="fa fa-check"></em>
+                            <p class="title">{{ message }}</p>
+                        </div>
                     </div>
                 </div>
-         </div>
-         {% endfor %}
-        {%endif%}       
+                {% endfor %}
+                {% endif %}
 
-		<div class="card card-block sameheight-item">
-			<form role="form" method="POST"onsubmit="return validarTodo('factura')">
-			{% csrf_token %}
-
-			<form method="post">
-				{% csrf_token %}
-				{{ form.as_p }}
-				
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Crear</button>
+                <div class="card card-block sameheight-item">
+                    <h1>Crear Factura</h1>
+                    <form method="POST">
+                      {% csrf_token %}
+                      {{ form.as_p }}
+                      <button type="submit">Crear</button>
+                    </form>
                 </div>
-			</form>
-		
-			</form>
-		</div>
-	</div>
-	</div>
-</section>
+            </div>
+        </div>
+    </section>
 </article>
+
+<script type="text/javascript">
+    var tipo_pago_field = document.getElementById("tipo_pago");
+
+    // Se define una función para mostrar u ocultar los campos de fecha de pago y fecha de vencimiento
+    function showHideFields() {
+        var fecha_pago_field = document.getElementById("fecha_pago");
+        var fecha_vencimiento_field = document.getElementById("fecha_vencimiento");
+
+        if (tipo_pago_field.value === "Mensualidad") {
+            fecha_pago_field.style.display = "block";
+            fecha_vencimiento_field.style.display = "block";
+        } else {
+            fecha_pago_field.style.display = "none";
+            fecha_vencimiento_field.style.display = "none";
+        }
+    }
+
+    // Se llama la función showHideFields cuando el valor del campo tipo_pago cambia
+    tipo_pago_field.addEventListener("change", showHideFields);
+
+    // Se llama la función showHideFields cuando la página se carga inicialmente
+    showHideFields();
+</script>
+
 {% endblock %}

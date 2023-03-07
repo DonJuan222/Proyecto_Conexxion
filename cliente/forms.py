@@ -50,24 +50,19 @@ class ClienteFormulario(forms.ModelForm):
         'descripcion': forms.TextInput(attrs={'class':'form-control','id':'descripcion','placeholder':'Direccion del cliente'}),
         
         }
-
 class FacturaForm(forms.ModelForm):
     class Meta:
         model = Factura
         fields = ['detalle','tipo_pago', 'valor_pago', 'fecha_pago', 'fecha_vencimiento']
         
         labels = {
-        'detalle': 'Detalle',
-        'valor_pago': 'Valor del Pago',
-        'fecha_pago': 'Fecha de Pago',
-        'fecha_vencimiento': 'Pago Valido Hasta',
-
+            'detalle': 'Detalle',
+            'valor_pago': 'Valor del Pago',
+            'fecha_pago': 'Fecha de Pago',
+            'fecha_vencimiento': 'Pago Valido Hasta',
         }
-        widgets = {
-    
-        'fecha_pago': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_pago','class':'form-control','type':'date'} ),
-        'fecha_vencimiento': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_vencimiento','class':'form-control','type':'date'} ),
-
+        widgets = {    
+            'fecha_pago': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_pago','class':'form-control','type':'date'} ),
+            'fecha_vencimiento': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_vencimiento','class':'form-control','type':'date'} ),
+            'tipo_pago': forms.Select(attrs={'id':'tipo_pago'})
         }
-
-        

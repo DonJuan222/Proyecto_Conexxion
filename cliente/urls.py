@@ -17,7 +17,7 @@ urlpatterns = [
     path('FacturaRetirada/<int:id>/', views.ListarFacturaRetirada.as_view(), name='FacturaRetirada'),
     path('crear_factura/<int:cliente_id>/',crear_factura),
     path('verFactura/<int:p>',views.VerFactura.as_view()),
-    # path('generarFacturaPDF/<int:p>',views.GenerarFacturaPDF.as_view(), name='generarFacturaPDF'),
+    path('generarFacturaPDF/<int:p>',views.GenerarFacturaPDF.as_view(), name='generarFacturaPDF'),
     path('listarClientesRetirados', views.ListarClientesRetirados.as_view(), name='listarClientesRetirados'),
 
 ]
