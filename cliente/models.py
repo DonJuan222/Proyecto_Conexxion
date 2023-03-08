@@ -185,30 +185,17 @@ class Detalle(models.Model):
 
 # ---------------------------------------------------------------------------------------------------
 
-# ------------------------------------------TIPO PAGO--------------------------------------------------
-class Tipo_Pago(models.Model):
-    tipo_pago = models.CharField(max_length=15, null=False)
-
-    def __str__(self):
-        return self.tipo_pago
-
-    class Meta:
-        db_table = 'Tipo_Pago'
-        verbose_name = 'Tipo_Pago'
-        verbose_name_plural = 'Tipos_Pagos'
-        ordering = ['id']
-
-    def save(self, *args, **kwargs):
-        self.tipo_pago = self.tipo_pago.strip()
-        super().save(*args, **kwargs)
-# ---------------------------------------------------------------------------------------------------
-
 
 # -------------------------------------FACTURA-------------------------------------------------------
 class Factura(models.Model):
+    TIPO_CHOICES = (
+        ('Mensualidad', 'Mensualidad'),
+        ('Banco', 'Banco'),
+        ('Acertemos', 'Acertemos'),
+    )
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     detalle = models.ForeignKey(Detalle, on_delete=models.SET_NULL, null=True)
-    tipo_pago = models.ForeignKey(Tipo_Pago, on_delete=models.SET_NULL, null=True)
+    tipo_pago = models.CharField(max_length=15, choices=TIPO_CHOICES, null=True,blank=True)
     valor_pago = models.CharField(max_length=15, null=True, blank=True)
     fecha_pago = models.DateField(null=True, blank=True, verbose_name='Fecha de pago (Opcional)')
     fecha_vencimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de vencimiento (Opcional)')
@@ -222,10 +209,14 @@ class Factura(models.Model):
 
 # -------------------------------------FACTURA RETIRADA-------------------------------------------------------
 class FacturaRetirada(models.Model):
-
+    TIPO_CHOICES = (
+        ('Mensualidad', 'Mensualidad'),
+        ('Banco', 'Banco'),
+        ('Acertemos', 'Acertemos'),
+    )
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     detalle = models.ForeignKey(Detalle, on_delete=models.SET_NULL, null=True)
-    tipo_pago = models.ForeignKey(Tipo_Pago, on_delete=models.SET_NULL, null=True)
+    tipo_pago = models.CharField(max_length=15, choices=TIPO_CHOICES, null=True,blank=True)
     valor_pago = models.CharField(max_length=15, null=True, blank=True)
     fecha_pago = models.DateField(null=True, blank=True, verbose_name='Fecha de pago (Opcional)',)
     fecha_vencimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de vencimiento (Opcional)',)

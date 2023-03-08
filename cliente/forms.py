@@ -64,5 +64,5 @@ class FacturaForm(forms.ModelForm):
         widgets = {    
             'fecha_pago': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_pago','class':'form-control','type':'date'} ),
             'fecha_vencimiento': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_vencimiento','class':'form-control','type':'date'} ),
-            'tipo_pago': forms.Select(attrs={'id':'tipo_pago'})
+            'tipo_pago': forms.Select(attrs={'id': 'tipo_pago', 'class': 'form-control'}),
         }

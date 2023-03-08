@@ -1,7 +1,7 @@
 from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
-from .models import Cliente, Factura, Municipio, Equipos, Capacidad_Megas, Detalle,Tipo_Pago,Tipo_Instalacion,ClienteRetirado, FacturaRetirada
+from .models import Cliente, Factura, Municipio, Equipos, Capacidad_Megas, Detalle,Tipo_Instalacion,ClienteRetirado, FacturaRetirada
 
 # Register your models here.
 
@@ -21,7 +21,6 @@ admin.site.register(Municipio)
 admin.site.register(Equipos)
 admin.site.register(Capacidad_Megas)
 admin.site.register(Detalle)
-admin.site.register(Tipo_Pago)
 admin.site.register(Tipo_Instalacion)
 admin.site.register(ClienteRetirado)
 admin.site.register(FacturaRetirada)

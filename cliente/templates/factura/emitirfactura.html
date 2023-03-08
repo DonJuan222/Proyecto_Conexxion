@@ -33,29 +33,19 @@
         </div>
     </section>
 </article>
-
-<script type="text/javascript">
-    var tipo_pago_field = document.getElementById("tipo_pago");
-
-    // Se define una función para mostrar u ocultar los campos de fecha de pago y fecha de vencimiento
-    function showHideFields() {
-        var fecha_pago_field = document.getElementById("fecha_pago");
-        var fecha_vencimiento_field = document.getElementById("fecha_vencimiento");
-
-        if (tipo_pago_field.value === "Mensualidad") {
-            fecha_pago_field.style.display = "block";
-            fecha_vencimiento_field.style.display = "block";
+<script>
+    document.getElementById('id_tipo_pago').addEventListener('change', function() {
+        var tipoPago = this.value;
+        var fechaPagoField = document.getElementById('id_fecha_pago');
+        var fechaVencimientoField = document.getElementById('id_fecha_vencimiento');
+        if (tipoPago === 'Mensualidad') {
+            fechaPagoField.style.display = 'block';
+            fechaVencimientoField.style.display = 'block';
         } else {
-            fecha_pago_field.style.display = "none";
-            fecha_vencimiento_field.style.display = "none";
+            fechaPagoField.style.display = 'none';
+            fechaVencimientoField.style.display = 'none';
         }
-    }
-
-    // Se llama la función showHideFields cuando el valor del campo tipo_pago cambia
-    tipo_pago_field.addEventListener("change", showHideFields);
-
-    // Se llama la función showHideFields cuando la página se carga inicialmente
-    showHideFields();
+    });
 </script>
 
 {% endblock %}

@@ -347,27 +347,22 @@ class ListarFacturaRetirada(LoginRequiredMixin,View):
 
 
 # Funcion que permite crear la factura de un cliente por su ID---------------------------------------
-
 def crear_factura(request, cliente_id):
     cliente = Cliente.objects.get(id=cliente_id)
-    mostrar_campos_fechas = False  # variable para indicar si los campos deben mostrarse o no
     if request.method == 'POST':
         form = FacturaForm(request.POST)
         if form.is_valid():
             factura = form.save(commit=False)
             factura.cliente = cliente
+            if factura.tipo_pago != 'Mensualidad':
+                factura.fecha_pago = None
+                factura.fecha_vencimiento = None
             factura.save()
             return redirect('listarFactura', cliente.id)
     else:
         form = FacturaForm()
-    
-    # verificar si el tipo de pago es mensualidad
-    tipo_pago = request.POST.get('tipo_pago', None)  # obtener el tipo de pago enviado en el formulario
-    if tipo_pago == 'Mensualidad':
-        mostrar_campos_fechas = True  # mostrar campos de fecha de pago y vencimiento si el tipo de pago es mensualidad
+    return render(request, 'factura/emitirfactura.html', {'form': form})
 
-    context = {'form': form, 'mostrar_campos_fechas': mostrar_campos_fechas}
-    return render(request, 'factura/emitirfactura.html', context)
 
 # Fin de vista---------------------------------------------------------------------------------------
 
