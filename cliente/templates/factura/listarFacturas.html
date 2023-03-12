@@ -36,6 +36,7 @@
                                             <td><strong>Detalles</strong></td>
                                             <td><strong>Nombre</strong></td>
                                             <td><strong>Apellido</strong></td>
+                                            <td><strong>Tipo de Pago</strong></td>
                                             <td><strong>Valor de Pago</strong></td>
                                             <td><strong>Fecha de Pago</strong></td>
                                             <td><strong>Pago valido hasta</strong></td>
@@ -46,9 +47,10 @@
                                     <tbody>
                                         {% for factura in facturas %}
                                         <tr>
-                                            <td>{{ factura.descripcion }}</td>
+                                            <td>{{ factura.detalle }}</td>
                                             <td>{{ factura.cliente.nombre }}</td>
                                             <td>{{ factura.cliente.apellido }}</td>
+                                            <td>{{ factura.tipo_pago }}</td>
                                             <td>{{ factura.valor_pago }}</td>
                                             <td>{{ factura.fecha_pago }}</td>
                                             <td>{{ factura.fecha_vencimiento }}</td>
@@ -62,11 +64,9 @@
 
                                                     <div class="dropdown-menu">
                                                         <a class="dropdown-item"
-                                                            href="/verFactura/{{ factura.id }}">Editar/Ver Factura</a>
+                                                            href="/verFactura/{{ factura.id }}">Generar/Ver Factura</a>
                                                         <div class="dropdown-divider"></div>
-                                                        <a class="dropdown-item"
-                                                            href="/generarFactura/{{ fila.id }}">Generar reporte
-                                                            (CSV)</a>
+                                                     
                                                     </div>
                                                     <!-- <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item" href="/generarFacturaPDF/{{ fila.id}}">Generar reporte (PDF)</a>

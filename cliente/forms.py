@@ -3,19 +3,9 @@ from .models import Cliente,Factura
 
 
 class ClienteFormulario(forms.ModelForm):
-    # tipoInsta =  [ ('------','------'),('Fibra Optica','Fibra'),('Radio Enlace','Radio')]
-
-    # tipo_instalacion = forms.CharField(
-    #     label="Tipo de Instalacion",
-    #     max_length=20,
-    #     widget=forms.Select(choices=tipoInsta,attrs={'placeholder': 'Tipo de Instalacion',
-    #     'id':'tipo_instalacion','class':'form-control'}
-    #     )
-    #     )
-
     class Meta:
         model = Cliente
-        fields = ['ip','cedula','nombre','apellido','telefono_uno','telefonos_dos','mensualidad','fecha_instalacion','direccion',
+        fields = ['ip','cedula','nombre','apellido','telefono_uno','telefonos_dos','valor_instalacion','fecha_instalacion','direccion',
                   'estado','descripcion','municipio','equipos','tipo_instalacion','cap_megas']
         labels = {
         'ip': 'Ip del cliente',
@@ -24,10 +14,9 @@ class ClienteFormulario(forms.ModelForm):
         'apellido': 'Apellido del cliente',
         'telefono_uno': 'Telefono del cliente',
         'telefonos_dos': 'Segundo telefono (Opcional)',
-        'mensualidad': 'Mensualidad cliente',
+        'valor_instalacion': 'Valor de Instalacion',
         'fecha_instalacion': 'Fecha de instalacion del cliente',
         'direccion': 'Dirección',
-        
         'descripcion': 'Detalles',
         'municipio': 'Municipio de Residencia',
         'equipos': 'Equipos',
@@ -43,30 +32,33 @@ class ClienteFormulario(forms.ModelForm):
         'apellido': forms.TextInput(attrs={'class':'form-control','id':'apellido','placeholder':'El apellido del cliente'}),
         'telefono_uno': forms.TextInput(attrs={'class':'form-control','id':'telefono_uno','placeholder':'Telefono del cliente'}), 
         'telefonos_dos': forms.TextInput(attrs={'class':'form-control','id':'telefonos_dos','placeholder':'Segundo telefono del cliente'}),                                                                       
-        'mensualidad': forms.TextInput(attrs={'class':'form-control','id':'mensualidad','placeholder':'Mensualidad del cliente'}),                                                                                                     
+        'valor_instalacion': forms.TextInput(attrs={'class':'form-control','id':'valor_instalacion','placeholder':'Valor de Instalacion del cliente'}),                                                                                                     
         'fecha_instalacion':forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_instalacion','class':'form-control','type':'date'} ),
         'direccion': forms.TextInput(attrs={'class':'form-control','id':'direccion','placeholder':'Direccion del cliente'}),                                                                       
-        
         'descripcion': forms.TextInput(attrs={'class':'form-control','id':'descripcion','placeholder':'Direccion del cliente'}),
+        'municipio': forms.TextInput(attrs={'class':'form-control','id':'municipio','placeholder':'Direccion del cliente'}),
+        'cap_megas': forms.TextInput(attrs={'class':'form-control','id':'cap_megas','placeholder':'Megas Contratadas'}),
         
         }
 
 class FacturaForm(forms.ModelForm):
     class Meta:
         model = Factura
-        fields = ['detalle','tipo_pago', 'valor_pago', 'fecha_pago', 'fecha_vencimiento']
+        fields = ['detalle','tipo_pago', 'valor_pago','n_recibo', 'fecha_pago', 'fecha_vencimiento']
         
         labels = {
         'detalle': 'Detalle',
         'valor_pago': 'Valor del Pago',
+        'n_recibo': 'Numero de Recibo',
         'fecha_pago': 'Fecha de Pago',
         'fecha_vencimiento': 'Pago Valido Hasta',
 
         }
         widgets = {
     
-        'fecha_pago': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_pago','class':'form-control','type':'date'} ),
-        'fecha_vencimiento': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_vencimiento','class':'form-control','type':'date'} ),
+        'fecha_pago': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'id_fecha_pago','class':'form-control','type':'date'} ),
+        'n_recibo': forms.TextInput(attrs={'id':'id_n_recibo'}),
+        'fecha_vencimiento': forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'id_fecha_vencimiento','class':'form-control','type':'date'} ),
 
         }
 

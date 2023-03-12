@@ -174,13 +174,13 @@ function clienteCamposOcultos(esto)
 <!-----------------   FIN DE CAMPOS ---------------------------------->
 
 
-<!-----------------   CAMPO DE MENSUALIDAD DEL CLIENTE ------------------>
+<!-----------------   CAMPO DE valor_instalacion DEL CLIENTE ------------------>
 
 <div class="form-group">
-	<label for="{{ form.mensualidad.name }}">
-		{{form.mensualidad.label}}
+	<label for="{{ form.valor_instalacion.name }}">
+		{{form.valor_instalacion.label}}
 	</label>
-		{{form.mensualidad}}
+		{{form.valor_instalacion}}
 </div>
 
 <!-----------------   FIN DE CAMPOS ---------------------------------->
@@ -198,6 +198,17 @@ function clienteCamposOcultos(esto)
 <!-----------------   FIN DE CAMPOS ---------------------------------->
 
 
+<!-----------------   CAMPO DE LA MUNICIPIO ------------------>
+
+<div class="form-group">
+	<label for="{{ form.municipio.name }}">
+		{{form.municipio.label}}
+	</label>
+		{{form.municipio}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
 
 <!-----------------   CAMPO DE LA DIRECCION DEL CLIENTE ------------------>
 
@@ -206,6 +217,28 @@ function clienteCamposOcultos(esto)
 		{{form.direccion.label}}
 	</label>
 		{{form.direccion}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE DESCRIPCION ------------------>
+
+<div class="form-group" id="div_telefono2">
+	<label for="{{ form.descripcion.name }}">
+		{{form.descripcion.label}}
+	</label>
+		{{form.descripcion}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<div class="form-group" id="div_telefono2">
+	<label for="{{ form.cap_megas.name }}">
+		{{form.cap_megas.label}}
+	</label>
+		{{form.cap_megas}}
 </div>
 
 <!-----------------   FIN DE CAMPOS ---------------------------------->
@@ -247,45 +280,21 @@ function clienteCamposOcultos(esto)
 <!-----------------   FIN DE CAMPOS ---------------------------------->
 
 
-<!-----------------   CAMPO DE DESCRIPCION ------------------>
-
-			<div class="form-group" id="div_telefono2">
-				<label for="{{ form.descripcion.name }}">
-					{{form.descripcion.label}}
-				</label>
-					{{form.descripcion}}
-			</div>
-
-<!-----------------   FIN DE CAMPOS ---------------------------------->
-
-
-<!-----------------   CAMPO DE DESCRIPCION ------------------>
-
-<div class="form-group" id="div_telefono2">
-	<label for="{{ form.cap_megas.name }}">
-		{{form.cap_megas.label}}
-	</label>
-		{{form.cap_megas}}
-</div>
-
-<!-----------------   FIN DE CAMPOS ---------------------------------->
-
-
-<!-----------------   CAMPO DE DESCRIPCION ------------------>
-
+<!-- ---------------   CAMPO DE FECHA RETIRADO ------------------>
+<!-- 
 <div class="form-group" id="div_telefono2">
 	<label for="{{ form.fecha_retirado.name }}">
 		{{form.fecha_retirado.label}}
 	</label>
 		{{form.fecha_retirado}}
-</div>
+</div> -->
 
-<!-----------------   FIN DE CAMPOS ---------------------------------->
+<!-----------------   FIN DE CAMPOS -------------------------------- -->
 
 
-<!------------------------------- BOTON DE INGRESO ------------------------------------>
+<!------------------------------- BOTON DE CREAR ------------------------------------>
 		<div class="form-group">
-            <button type="submit" class="btn btn-primary">Ingresar</button>
+            <button type="submit" class="btn btn-primary">Crear</button>
         </div>
 <!---------------------------------- FIN DE BOTON ---------------------------------->
 

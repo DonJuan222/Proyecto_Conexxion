@@ -4,8 +4,6 @@
 <article class="content forms-page">
 	    <div class="title-block">
           <h3 class="title">Emitir factura</h3>
-          <p class="title-description">Introduzca la cedula y el numero de
-          productos para generar los campos</p>
         </div>
 <section class="section">
     <div class="row sameheight-container">
@@ -24,22 +22,49 @@
         {%endif%}       
 
 		<div class="card card-block sameheight-item">
-			<form role="form" method="POST"onsubmit="return validarTodo('factura')">
-			{% csrf_token %}
-
 			<form method="post">
-				{% csrf_token %}
-				{{ form.as_p }}
-				
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="hidden" id="id_tipo_pago" value="{{ form.instance.tipo_pago }}">
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Crear</button>
+                  <button type="submit" class="btn btn-primary">Crear</button>
                 </div>
-			</form>
-		
-			</form>
+              </form>
+              
 		</div>
 	</div>
 	</div>
 </section>
 </article>
+<script>
+    // Obtener el valor del tipo de pago seleccionado
+    var tipo_pago = document.getElementById('id_tipo_pago').value;
+  
+    // Obtener los campos de n_recibo y fecha de vencimiento
+    var n_recibo = document.getElementById('id_n_recibo').parentNode;
+    var fecha_vencimiento = document.getElementById('id_fecha_vencimiento').parentNode;
+  
+    // Si el tipo de pago no es #Recibo, ocultar los campos de n_recibo y fecha de vencimiento
+    if (tipo_pago !== '#Recibo') {
+      n_recibo.style.display = 'none';
+      fecha_vencimiento.style.display = 'none';
+    }
+  
+    // Agregar un evento de cambio al campo de tipo de pago
+    var tipo_pago_input = document.getElementById('id_tipo_pago');
+    tipo_pago_input.addEventListener('change', function(event) {
+      // Obtener el nuevo valor del tipo de pago
+      var new_tipo_pago = event.target.value;
+  
+      // Si el nuevo tipo de pago es mensualidad, mostrar los campos de fecha de pago y fecha de vencimiento
+      if (new_tipo_pago === '#Recibo') {
+        n_recibo.style.display = '';
+        fecha_vencimiento.style.display = '';
+      } else { // de lo contrario, ocultarlos
+        n_recibo.style.display = 'none';
+        fecha_vencimiento.style.display = 'none';
+      }
+    });
+  </script>
+  
 {% endblock %}

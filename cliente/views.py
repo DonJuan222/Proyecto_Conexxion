@@ -72,7 +72,7 @@ class AgregarCliente(LoginRequiredMixin, View):
             apellido = form.cleaned_data['apellido']
             telefono_uno = form.cleaned_data['telefono_uno']
             telefonos_dos = form.cleaned_data['telefonos_dos']
-            mensualidad = form.cleaned_data['mensualidad']
+            valor_instalacion = form.cleaned_data['valor_instalacion']
             fecha_instalacion = form.cleaned_data['fecha_instalacion']
             direccion = form.cleaned_data['direccion']
             estado = form.cleaned_data['estado']
@@ -83,7 +83,7 @@ class AgregarCliente(LoginRequiredMixin, View):
             cap_megas = form.cleaned_data['cap_megas']           
 
             cliente = Cliente(ip=ip, cedula=cedula, nombre=nombre, apellido=apellido, telefono_uno=telefono_uno,
-                              telefonos_dos=telefonos_dos, mensualidad=mensualidad, fecha_instalacion=fecha_instalacion,
+                              telefonos_dos=telefonos_dos, valor_instalacion=valor_instalacion, fecha_instalacion=fecha_instalacion,
                               direccion=direccion,estado=estado,municipio=municipio, tipo_instalacion=tipo_instalacion,
                               descripcion=descripcion,equipos=equipos,cap_megas=cap_megas)
             cliente.save()
@@ -128,7 +128,7 @@ class EditarCliente(LoginRequiredMixin, View):
             apellido = form.cleaned_data['apellido']
             telefono_uno = form.cleaned_data['telefono_uno']
             telefonos_dos = form.cleaned_data['telefonos_dos']
-            mensualidad = form.cleaned_data['mensualidad']
+            valor_instalacion = form.cleaned_data['valor_instalacion']
             fecha_instalacion = form.cleaned_data['fecha_instalacion']
             direccion = form.cleaned_data['direccion']
             estado = form.cleaned_data['estado']
@@ -144,7 +144,7 @@ class EditarCliente(LoginRequiredMixin, View):
             cliente.apellido = apellido
             cliente.telefono_uno = telefono_uno
             cliente.telefonos_dos = telefonos_dos
-            cliente.mensualidad = mensualidad
+            cliente.valor_instalacion = valor_instalacion
             cliente.fecha_instalacion = fecha_instalacion
             cliente.direccion = direccion
             cliente.estado = estado
@@ -230,7 +230,7 @@ class Eliminar(LoginRequiredMixin, View):
                 apellido=cliente.apellido,
                 telefono_uno=cliente.telefono_uno,
                 telefonos_dos=cliente.telefonos_dos,
-                mensualidad=cliente.mensualidad,
+                valor_instalacion=cliente.valor_instalacion,
                 fecha_instalacion=cliente.fecha_instalacion,
                 direccion=cliente.direccion,
                 estado=cliente.estado,
@@ -303,7 +303,7 @@ class EliminarClienteRetirado(LoginRequiredMixin, View):
                 apellido=cliente_retirado.apellido,
                 telefono_uno=cliente_retirado.telefono_uno,
                 telefonos_dos=cliente_retirado.telefonos_dos,
-                mensualidad=cliente_retirado.mensualidad,
+                valor_instalacion=cliente_retirado.valor_instalacion,
                 fecha_instalacion=cliente_retirado.fecha_instalacion,
                 direccion=cliente_retirado.direccion,
                 estado=cliente_retirado.estado,
@@ -348,6 +348,7 @@ class ListarFacturaRetirada(LoginRequiredMixin,View):
 
 # Funcion que permite crear la factura de un cliente por su ID---------------------------------------
 
+@login_required(login_url='/login')
 def crear_factura(request, cliente_id):
     cliente = Cliente.objects.get(id=cliente_id)
     if request.method == 'POST':
@@ -377,36 +378,83 @@ class VerFactura(LoginRequiredMixin,View):
 #Fin de vista----------------------------------------------------------------------------------------
 
 
-# #Genera la factura en PDF--------------------------------------------------------------------------
-# class GenerarFacturaPDF(LoginRequiredMixin,View):
+#Muestra los detalles individuales de una factura----------------------------------------------------
+class VerFacturaRetirada(LoginRequiredMixin,View):
+    def get(self, request, p):
+        try:
+            facturaRetirada = FacturaRetirada.objects.get(id=p)
+        except FacturaRetirada.DoesNotExist:
+            return redirect('listarClientesRetirados')
+
+        context = {'facturaRetirada': facturaRetirada}
+        return render(request, 'factura/verFacturaRetirada.html', context)
+#Fin de vista----------------------------------------------------------------------------------------
+
+
+#Genera la factura en PDF--------------------------------------------------------------------------
+class GenerarFacturaPDF(LoginRequiredMixin,View):
+    redirect_field_name = None
+
+    def get(self, request, p):
+        import io
+        from reportlab.pdfgen import canvas
+        from django.http import FileResponse
+        from datetime import date  
+
+        factura = Factura.objects.get(id=p)       
+        data = { 
+            'nombre':factura.cliente.nombre,
+            'apellido': factura.cliente.apellido,
+            'cedula': factura.cliente.cedula,
+            'detalle': factura.detalle,
+            'valor_pago': factura.valor_pago,
+            'fecha': factura.fecha_pago,
+            'valido_hasta': factura.fecha_vencimiento,
+            'fecha':  date.today(),
+        }
+        nombre_factura = "factura_%s.pdf" % (factura.id)
+
+        pdf = render_to_pdf('PDF/plantillaPDF.html', {'datos': [data]})
+
+        response = HttpResponse(pdf,content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % nombre_factura
+
+        return response  
+
+#Fin de vista--------------------------------------------------------------------------------------
+
+
+
+#Accede a los modulos del manual de usuario---------------------------------------------#
+# class VerManualDeUsuario(LoginRequiredMixin, View):
+#     login_url = '/inventario/login'
 #     redirect_field_name = None
 
-#     def get(self, request, p):
-#         import io
-#         from reportlab.pdfgen import canvas
-#         from django.http import FileResponse
-#         import datetime
-        
+#     def get(self, request, pagina):
+#         if pagina == 'inicio':
+#             return render(request, 'manual/index.html') 
 
-#         factura = Factura.obj69ects.get(id=p)       
-#         data = { 
-#             'ip': factura.cliente.ip,
-#             'nombre_cliente': factura.cliente.nombre + " " + factura.cliente.apellido,
-#             'cedula_cliente': factura.cliente.cedula,
-#             'detalle': factura.detalle,
-#             'valor_pago': factura.valor_pago,
-#             'fecha': factura.fecha_pago,
-#             'valido_hasta': factura.fecha_vencimiento,
-            
-#         }
+#         if pagina == 'producto':
+#             return render(request, 'manual/producto.html') 
 
-#         nombre_factura = "factura_%s.pdf" % (factura.id)
+#         if pagina == 'proveedor':
+#             return render(request, 'manual/proveedor.html') 
 
-#         pdf = render_to_pdf('PDF/prueba.html', data)
-#         response = HttpResponse(pdf,content_type='application/pdf')
-#         response['Content-Disposition'] = 'attachment; filename="%s"' % nombre_factura
+#         if pagina == 'pedido':
+#             return render(request, 'manual/pedido.html') 
 
-#         return response  
+#         if pagina == 'clientes':
+#             return render(request, 'manual/clientes.html') 
 
-# #Fin de vista--------------------------------------------------------------------------------------
+#         if pagina == 'factura':
+#             return render(request, 'inventario/manual/factura.html') 
 
+#         if pagina == 'usuarios':
+#             return render(request, 'inventario/manual/usuarios.html')
+
+#         if pagina == 'opciones':
+#             return render(request, 'inventario/manual/opciones.html')
+
+
+
+#Fin de vista--------------------------------------------------------------------------------

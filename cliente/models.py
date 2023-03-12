@@ -38,21 +38,6 @@ class Municipio(models.Model):
 # ---------------------------------------------------------------------------------------------------
 
 
-# ------------------------------------------Megas----------------------------------------------------
-class Capacidad_Megas(models.Model):
-    megas = models.CharField(max_length=10, null=False)
-
-    def __str__(self):
-        return self.megas
-
-    class Meta:
-        db_table = 'Megas'
-        verbose_name = 'Mega'
-        verbose_name_plural = 'Megas'
-        ordering = ['id']
-# ---------------------------------------------------------------------------------------------------
-
-
 # ------------------------------------------Tipo_Instalacion-----------------------------------------
 class Tipo_Instalacion(models.Model):
     tipo_ins = models.CharField(max_length=20, null=False)
@@ -80,7 +65,7 @@ class Cliente(models.Model):
     apellido = models.CharField(max_length=50, null=False)
     telefono_uno = models.CharField(max_length=13, null=True, blank=True)
     telefonos_dos = models.CharField(max_length=13, null=True, blank=True)
-    mensualidad = models.CharField(max_length=15, null=True, blank=True)
+    valor_instalacion = models.CharField(max_length=10, null=True, blank=True)
     fecha_instalacion = models.DateField(null=True, blank=True)
     direccion = models.CharField(max_length=25, null=True, blank=True)
     estado = models.CharField(max_length=13, choices=ESTADO_CHOICES, null=True, blank=True)
@@ -88,7 +73,7 @@ class Cliente(models.Model):
     municipio = models.ForeignKey(Municipio, on_delete=models.SET_NULL, null=True, blank=True)
     equipos = models.ForeignKey(Equipos, on_delete=models.SET_NULL, null=True, blank=True)
     tipo_instalacion = models.ForeignKey(Tipo_Instalacion, on_delete=models.SET_NULL, null=True, blank=True)
-    cap_megas = models.ForeignKey(Capacidad_Megas, on_delete=models.SET_NULL, null=True, blank=True)
+    cap_megas = models.CharField(max_length=25, null=True, blank=True)
 
     class Meta:
         db_table = 'Cliente'
@@ -133,21 +118,21 @@ class ClienteRetirado(models.Model):
         ('arriba', 'Activo'),
         ('abajo', 'Sin servicio'),
     )
-    ip= models.CharField(max_length=13,null=True, unique=True) 
-    cedula=models.CharField(max_length=10, null=True, unique=True)
-    nombre=models.CharField(max_length=50, null=True)
-    apellido=models.CharField(max_length=50, null=True)
-    telefono_uno=models.CharField(max_length=13, null=True,blank=True)
-    telefonos_dos=models.CharField(max_length=13, null=True,blank=True)
-    mensualidad=models.CharField(max_length=15,null=True,blank=True)
-    fecha_instalacion = models.DateField(null=True,blank=True)
-    direccion=models.CharField(max_length=25,null=True,blank=True)
-    estado=models.CharField(max_length=13, choices=ESTADO_CHOICES, null=True,blank=True)
-    descripcion=models.TextField( null=True,blank=True)
-    municipio=models.ForeignKey(Municipio, on_delete=models.SET_NULL,null=True,blank=True)
-    equipos=models.ForeignKey(Equipos, on_delete=models.SET_NULL, null=True,blank=True)
-    tipo_instalacion=models.ForeignKey(Tipo_Instalacion, on_delete=models.SET_NULL,null=True,blank=True)
-    cap_megas=models.ForeignKey(Capacidad_Megas, on_delete=models.SET_NULL,null=True,blank=True)
+    ip = models.CharField(max_length=13, null=False, unique=True)
+    cedula = models.CharField(max_length=10, null=False, unique=True)
+    nombre = models.CharField(max_length=50, null=False)
+    apellido = models.CharField(max_length=50, null=False)
+    telefono_uno = models.CharField(max_length=13, null=True, blank=True)
+    telefonos_dos = models.CharField(max_length=13, null=True, blank=True)
+    valor_instalacion = models.CharField(max_length=10, null=True, blank=True)
+    fecha_instalacion = models.DateField(null=True, blank=True)
+    direccion = models.CharField(max_length=25, null=True, blank=True)
+    estado = models.CharField(max_length=13, choices=ESTADO_CHOICES, null=True, blank=True)
+    descripcion = models.TextField(null=True, blank=True)
+    municipio = models.ForeignKey(Municipio, on_delete=models.SET_NULL, null=True, blank=True)
+    equipos = models.ForeignKey(Equipos, on_delete=models.SET_NULL, null=True, blank=True)
+    tipo_instalacion = models.ForeignKey(Tipo_Instalacion, on_delete=models.SET_NULL, null=True, blank=True)
+    cap_megas = models.CharField(max_length=25, null=True, blank=True)
     fecha_retirado = models.DateField(auto_now_add=True, blank=True, null=True)
 
     class Meta:
@@ -186,33 +171,22 @@ class Detalle(models.Model):
 # ---------------------------------------------------------------------------------------------------
 
 
-# ------------------------------------------Detalle--------------------------------------------------
-class Tipo_Pago(models.Model):
-    tipo_pago = models.CharField(max_length=15, null=False)
-
-    def __str__(self):
-        return self.tipo_pago
-
-    class Meta:
-        db_table = 'Tipo_Pago'
-        verbose_name = 'Tipo_Pago'
-        verbose_name_plural = 'Tipos_Pagos'
-        ordering = ['id']
-
-    def save(self, *args, **kwargs):
-        self.tipo_pago = self.tipo_pago.strip()
-        super().save(*args, **kwargs)
-# ---------------------------------------------------------------------------------------------------
-
-
 # -------------------------------------FACTURA-------------------------------------------------------
 class Factura(models.Model):
+    TIPO_CHOICES = (
+        ('#Recibo', '#Recibo'),
+        ('Bancos', 'Bancos'),
+        ('Acertemos', 'Acertemos'),
+        ('Nequi', 'Nequi'),
+    )
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     detalle = models.ForeignKey(Detalle, on_delete=models.SET_NULL, null=True)
-    tipo_pago = models.ForeignKey(Tipo_Pago, on_delete=models.SET_NULL, null=True)
+    tipo_pago = models.CharField(max_length=15, choices=TIPO_CHOICES, null=True,blank=True)
     valor_pago = models.CharField(max_length=15, null=True, blank=True)
-    fecha_pago = models.DateField(null=True, blank=True)
-    fecha_vencimiento = models.DateField(null=True, blank=True)
+    n_recibo = models.CharField(max_length=6, null=True, blank=True)
+    fecha_pago = models.DateField(null=True, blank=True, verbose_name='Fecha de pago (Opcional)')
+    fecha_vencimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de vencimiento (Opcional)')
+    
     
     @classmethod
     def facturasRegistradas(self):
@@ -223,12 +197,18 @@ class Factura(models.Model):
 
 # -------------------------------------FACTURA RETIRADA-------------------------------------------------------
 class FacturaRetirada(models.Model):
-    cliente_retirado = models.ForeignKey(ClienteRetirado, on_delete=models.SET_NULL, null=True)
+    TIPO_CHOICES = (
+        ('Mensualidad', 'Mensualidad'),
+        ('Banco', 'Banco'),
+        ('Acertemos', 'Acertemos'),
+    )
+    cliente_retirado = models.ForeignKey(ClienteRetirado, on_delete=models.SET_NULL,blank=True, null=True)
     detalle = models.ForeignKey(Detalle, on_delete=models.SET_NULL, null=True)
-    tipo_pago = models.ForeignKey(Tipo_Pago, on_delete=models.SET_NULL, null=True)
+    tipo_pago = models.CharField(max_length=15, choices=TIPO_CHOICES, null=True,blank=True)
     valor_pago = models.CharField(max_length=15, null=True, blank=True)
-    fecha_pago = models.DateField(null=True, blank=True)
-    fecha_vencimiento = models.DateField(null=True, blank=True)
+    fecha_pago = models.DateField(null=True, blank=True, verbose_name='Fecha de pago (Opcional)')
+    fecha_vencimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de vencimiento (Opcional)')
+    
 
 # ---------------------------------------------------------------------------------------------------
 # -------------------------------------FIN DEL APARTADO FACTURA--------------------------------------

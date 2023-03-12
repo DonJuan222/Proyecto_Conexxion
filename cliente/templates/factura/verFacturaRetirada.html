@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <div class="card-block">
-                        <p>{{factura.descripcion}}</p>
+                        <p>{{factura.fecha_pago}}</p>
                     </div>
                 </div>
             </div> -->
@@ -86,11 +86,12 @@
                         <p>{{factura.fecha_vencimiento}}</p>
                     </div>
                 </div>
+            </div>
+                <a href="/generarFacturaPDF/{{ factura.id}}" class="btn btn-secondary btn-lg"><em
+                        class="fa fa-print"></em>Generar PDF</a>
+            </div>
+
         </div>
-    </div>
-    <a href="/generarFacturaPDF/{{ factura.id}}" class="btn btn-secondary btn-lg"><em
-            class="fa fa-print"></em>Generar PDF</a>
-</div>
     </section>
 </article>
 {% endblock %}
