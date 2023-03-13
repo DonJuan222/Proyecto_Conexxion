@@ -6,6 +6,7 @@ from .views import crear_factura
 urlpatterns = [
 
     path('listarClientes', views.ListarClientes.as_view(), name='listarClientes'),
+    path('cambiar_estado/<int:cliente_id>/', views.ListarClientes.as_view(), name='cambiar_estado_cliente'),
     path('agregarCliente', views.AgregarCliente.as_view(), name='agregarCliente'),
     # path('importarClientes', import_clientes, name='importarClientes'),
     # path('exportarClientes', views.ExportarClientes.as_view(), name='exportarClientes'),
@@ -20,8 +21,7 @@ urlpatterns = [
     path('verFacturaRetirada/<int:p>',views.VerFacturaRetirada.as_view(),name='verFacturaRetirada'),
     path('generarFacturaPDF/<int:p>',views.GenerarFacturaPDF.as_view(), name='generarFacturaPDF'),
     path('listarClientesRetirados', views.ListarClientesRetirados.as_view(), name='listarClientesRetirados'),
-
-
+        
     path('listar_suspendidos/', views.ListarSuspendidos.as_view(), name='listar_suspendidos'),
     path('reporte_suspendidos/', views.ReporteSuspendidos.as_view(), name='reporte_suspendidos'),
 

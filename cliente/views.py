@@ -25,6 +25,9 @@ from django.contrib.auth.decorators import login_required
 #Libreria para hacer los reportes
 from openpyxl import Workbook
 
+from django.db.models import OuterRef, Subquery
+
+
 
 # Crea una lista de los clientes, 10 por pagina------------------------------------------------------
 class ListarClientes(LoginRequiredMixin, View):
@@ -32,15 +35,24 @@ class ListarClientes(LoginRequiredMixin, View):
     redirect_field_name = None
 
     def get(self, request):
-        from django.db import models
-        # Saca una lista de todos los clientes de la BDD
-        clientes = Cliente.objects.all()
+        # Obtener los clientes con la fecha de pago y fecha de vencimiento más recientes de su factura
+        ultima_factura = Factura.objects.filter(cliente=OuterRef('pk')).order_by('-fecha_pago', '-fecha_vencimiento')
+        clientes = Cliente.objects.annotate(fecha_pago=Subquery(ultima_factura.values('fecha_pago')[:1]),
+                                             fecha_vencimiento=Subquery(ultima_factura.values('fecha_vencimiento')[:1]))
+
         contexto = {'tabla': clientes}
         contexto = complementarContexto(contexto, request.user)
 
         return render(request, 'cliente/listarClientes.html', contexto)
+    
+    def post(self, request, cliente_id):
+        cliente = Cliente.objects.get(pk=cliente_id)
+        estado_nuevo = request.POST['estado']
+        cliente.estado = estado_nuevo
+        cliente.save()
+        return redirect('listarClientes')
+    
 # Fin de vista---------------------------------------------------------------------------------------
-
 
 # Crea una lista de los clientes, 10 por pagina------------------------------------------------------
 class ListarClientesRetirados(LoginRequiredMixin, View):
@@ -226,6 +238,9 @@ class Eliminar(LoginRequiredMixin, View):
     def get(self, request, modo, p):
         if modo == 'cliente':
             cliente = Cliente.objects.get(id=p)
+            # Cambiar el estado del cliente a retirado
+            cliente.estado = 'Retiros'
+            cliente.save()
             # Mover el cliente a ClienteRetirado
             cliente_retirado = ClienteRetirado(
                 ip=cliente.ip,

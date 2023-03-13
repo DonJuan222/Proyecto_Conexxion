@@ -70,7 +70,7 @@
                                                 <td>{{fila.apellido}}</td>
                                                 <td>{{fila.telefono_uno}}</td>
                                                 <td>{{fila.telefonos_dos}}</td>
-                                                <td>{{fila.mensualidad}}</td>
+                                                <td>{{fila.valor_instalacion}}</td>
                                                 <td>{{fila.fecha_instalacion}}</td>	
                                                 <td>{{fila.tipo_instalacion}}</td>
                                                 <td>{{fila.municipio}}</td>                                       
@@ -78,10 +78,12 @@
                                                 <td>{{fila.cap_megas}}</td>
                                                 <td>{{fila.direccion}}</td>                                          
                                                 <td>{{fila.descripcion}}</td>
-                                                {% if fila.estado == 'arriba' %}
+                                                {% if fila.estado == 'Activos' %}
                                                 <td align="center" style="color: green;"> <em class="fa fa-check"></em></td>
-                                                {% elif fila.estado == 'abajo' %}
-                                                <td align="center" style="color: red;"><em class="fa fa-ban"></em></td>
+                                                {% elif fila.estado == 'Suspendidos' %}
+                                                <td align="center" style="color: orange;"><em class="fa fa-ban"></em></td>
+                                                {% elif fila.estado == 'Retiros' %}
+                                                <td align="center" style="color: red;"><em class="fa fa-times"></em></td>
                                                 {% endif %}
                                                 <td>{{fila.fecha_retirado}}</td>
 
@@ -100,8 +102,7 @@
                                                                 href="/FacturaRetirada/{{ fila.id}}">Listar Facturas</a>
                                                             <div class="dropdown-divider"></div>
                                                             <a class="dropdown-item"
-                                                                onclick="eliminarRetirados( {{fila.id}},'cliente_retirado' )">Eliminar
-                                                                Cliente Retirado</a>
+                                                                onclick="eliminarRetirados( {{fila.id}},'cliente_retirado' )">Recuperar Cliente Retirado</a>
                                                         </div>
                                                     </div>
                                                 </td>

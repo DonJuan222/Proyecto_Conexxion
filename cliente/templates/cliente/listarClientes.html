@@ -44,7 +44,7 @@
                                                 <td><strong>Apellido</strong></td>
                                                 <td><strong>Primer Telefono</strong></td>
                                                 <td><strong>Segundo Telefono</strong></td>
-                                                <td><strong>Mensualidad</strong></td>
+                                                <td><strong>Valor de Instalacion</strong></td>
                                                 <td><strong>Fecha de Instalacion</strong></td>
                                                 <td><strong>Tipo de Instalacion</strong></td>
                                                 <td><strong>Municipio</strong></td>
@@ -52,7 +52,10 @@
                                                 <td><strong>Megas</strong></td>
                                                 <td><strong>Direccion</strong></td>                                  
                                                 <td><strong>Descripcion</strong></td>
+                                                <td><strong>Fecha de Pago</strong></td>                                  
+                                                <td><strong>Valido Hasta</strong></td>
                                                 <td><strong>Estado</strong></td>
+                                                <td><strong>Cambiar Estado</strong></td>
                                                 <td><strong>Opciones</strong></td>
                                              
                                             </tr>
@@ -67,7 +70,7 @@
                                                 <td>{{fila.apellido}}</td>
                                                 <td>{{fila.telefono_uno}}</td>
                                                 <td>{{fila.telefonos_dos}}</td>
-                                                <td>{{fila.mensualidad}}</td>
+                                                <td>{{fila.valor_instalacion}}</td>
                                                 <td>{{fila.fecha_instalacion}}</td>	
                                                 <td>{{fila.tipo_instalacion}}</td>
                                                 <td>{{fila.municipio}}</td>                                       
@@ -75,6 +78,8 @@
                                                 <td>{{fila.cap_megas}}</td>
                                                 <td>{{fila.direccion}}</td>                                          
                                                 <td>{{fila.descripcion}}</td>
+                                                <td>{{fila.fecha_pago}}</td>                                          
+                                                <td>{{fila.fecha_vencimiento}}</td>
                                                 {% if fila.estado == 'Activos' %}
                                                 <td align="center" style="color: green;"> <em class="fa fa-check"></em></td>
                                                 {% elif fila.estado == 'Suspendidos' %}
@@ -82,7 +87,16 @@
                                                 {% elif fila.estado == 'Retiros' %}
                                                 <td align="center" style="color: red;"><em class="fa fa-times"></em></td>
                                                 {% endif %}
-
+                                                <td>
+                                                    <form method="post" action="{% url 'cambiar_estado_cliente' fila.id %}" >
+                                                        {% csrf_token %}
+                                                        <select name="estado" type="button" class="btn btn-info dropdown-toggle">
+                                                            <option value="Activos" {% if fila.estado == 'Activos' %}selected{% endif %}>Activar</option>
+                                                            <option value="Suspendidos" {% if fila.estado == 'Suspendidos' %}selected{% endif %}>Suspender</option>
+                                                        </select>
+                                                        <button type="submit" class="btn btn-success">Cambiar estado</button>
+                                                    </form>
+                                                </td>
                                                 <td>
                                         
 
