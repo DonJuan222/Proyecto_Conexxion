@@ -75,10 +75,12 @@
                                                 <td>{{fila.cap_megas}}</td>
                                                 <td>{{fila.direccion}}</td>                                          
                                                 <td>{{fila.descripcion}}</td>
-                                                {% if fila.estado == 'arriba' %}
+                                                {% if fila.estado == 'Activos' %}
                                                 <td align="center" style="color: green;"> <em class="fa fa-check"></em></td>
-                                                {% elif fila.estado == 'abajo' %}
-                                                <td align="center" style="color: red;"><em class="fa fa-ban"></em></td>
+                                                {% elif fila.estado == 'Suspendidos' %}
+                                                <td align="center" style="color: orange;"><em class="fa fa-ban"></em></td>
+                                                {% elif fila.estado == 'Retiros' %}
+                                                <td align="center" style="color: red;"><em class="fa fa-times"></em></td>
                                                 {% endif %}
 
                                                 <td>

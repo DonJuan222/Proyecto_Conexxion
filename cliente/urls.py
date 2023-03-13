@@ -21,6 +21,10 @@ urlpatterns = [
     path('generarFacturaPDF/<int:p>',views.GenerarFacturaPDF.as_view(), name='generarFacturaPDF'),
     path('listarClientesRetirados', views.ListarClientesRetirados.as_view(), name='listarClientesRetirados'),
 
+
+    path('listar_suspendidos/', views.ListarSuspendidos.as_view(), name='listar_suspendidos'),
+    path('reporte_suspendidos/', views.ReporteSuspendidos.as_view(), name='reporte_suspendidos'),
+
     # path('verManualDeUsuario/<str:pagina>/',views.VerManualDeUsuario.as_view(), name='verManualDeUsuario')
 ]
 

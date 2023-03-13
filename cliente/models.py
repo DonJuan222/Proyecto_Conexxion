@@ -56,8 +56,9 @@ class Tipo_Instalacion(models.Model):
 # ------------------------------------------Cliente--------------------------------------------------
 class Cliente(models.Model):
     ESTADO_CHOICES = (
-        ('arriba', 'Activo'),
-        ('abajo', 'Sin servicio'),
+        ('Activos', 'Activos'),
+        ('Suspendidos', 'Suspendidos'),
+        ('Retiros', 'Retiros'),
     )
     ip = models.CharField(max_length=13, null=False, unique=True)
     cedula = models.CharField(max_length=10, null=False, unique=True)

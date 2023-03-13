@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 # para redirigir a otras paginas
 from django.http import HttpResponseRedirect, HttpResponse
 # Mensajes de formulario
@@ -20,6 +21,9 @@ from django.forms import formset_factory
 
 #Decoradores permisos y Login
 from django.contrib.auth.decorators import login_required
+
+#Libreria para hacer los reportes
+from openpyxl import Workbook
 
 
 # Crea una lista de los clientes, 10 por pagina------------------------------------------------------
@@ -92,7 +96,7 @@ class AgregarCliente(LoginRequiredMixin, View):
             messages.success(
                 request, 'Ingresado exitosamente bajo la ID %s.' % cliente.id)
             request.session['clienteProcesado'] = 'agregado'
-            return HttpResponseRedirect("/agregarCliente")
+            return HttpResponseRedirect("/listarClientes")
         else:
             # De lo contrario lanzara el mismo formulario
 
@@ -160,7 +164,7 @@ class EditarCliente(LoginRequiredMixin, View):
             messages.success(
                 request, 'Actualizado exitosamente el cliente de ID %s.' % p)
             request.session['clienteProcesado'] = 'editado'
-            return HttpResponseRedirect("/editarCliente/%s" % cliente.id)
+            return HttpResponseRedirect("/listarClientes" )
         else:
             # De lo contrario lanzara el mismo formulario
             messages.success(request, 'La Ip o la Cedula ya estan registradas')
@@ -336,6 +340,8 @@ class ListarFactura(LoginRequiredMixin,View):
 
 # Crea una lista de la factura, 10 por pagina--------------------------------------------------------
 class ListarFacturaRetirada(LoginRequiredMixin,View):
+    login_url = '/login'
+    redirect_field_name = None
 
     def get(self, request, id):
         cliente_retirado = ClienteRetirado.objects.get(id=id)
@@ -367,6 +373,8 @@ def crear_factura(request, cliente_id):
 
 #Muestra los detalles individuales de una factura----------------------------------------------------
 class VerFactura(LoginRequiredMixin,View):
+    login_url = '/login'
+    redirect_field_name = None
     def get(self, request, p):
         try:
             factura = Factura.objects.get(id=p)
@@ -380,6 +388,8 @@ class VerFactura(LoginRequiredMixin,View):
 
 #Muestra los detalles individuales de una factura----------------------------------------------------
 class VerFacturaRetirada(LoginRequiredMixin,View):
+    login_url = '/login'
+    redirect_field_name = None
     def get(self, request, p):
         try:
             facturaRetirada = FacturaRetirada.objects.get(id=p)
@@ -393,6 +403,7 @@ class VerFacturaRetirada(LoginRequiredMixin,View):
 
 #Genera la factura en PDF--------------------------------------------------------------------------
 class GenerarFacturaPDF(LoginRequiredMixin,View):
+    login_url = '/login'
     redirect_field_name = None
 
     def get(self, request, p):
@@ -457,4 +468,55 @@ class GenerarFacturaPDF(LoginRequiredMixin,View):
 
 
 
+#Fin de vista--------------------------------------------------------------------------------
+
+
+#Generar los reportes de los clientes Supendidos---------------------------------------------#
+class ReporteSuspendidos(LoginRequiredMixin,TemplateView):
+    login_url = '/login'
+    redirect_field_name = None
+
+    def get(self, request, *args, **kwargs):
+        # Seleccionar los clientes en estado "Suspendidos"
+        clientes_suspendidos = Cliente.objects.filter(estado='Suspendidos')
+        
+        # Crear el libro de trabajo de Excel
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Clientes Suspendidos"
+        
+        # Escribir los encabezados de la tabla
+        ws['A1'] = 'Cédula'
+        ws['B1'] = 'Ip'
+        ws['C1'] = 'Nombre'
+        ws['D1'] = 'Apellido'
+        ws['E1'] = 'Telefono'
+
+        
+        # Escribir los datos de los clientes
+        for i, cliente in enumerate(clientes_suspendidos, start=2):
+            ws.cell(row=i, column=1, value=cliente.cedula)
+            ws.cell(row=i, column=2, value=cliente.ip)
+            ws.cell(row=i, column=3, value=cliente.nombre)
+            ws.cell(row=i, column=4, value=cliente.apellido)
+            ws.cell(row=i, column=5, value=cliente.telefono_uno)
+      
+        
+        # Guardar el archivo y enviarlo como respuesta
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=clientes_suspendidos.xlsx'
+        wb.save(response)
+        return response
+    
+#Fin de vista--------------------------------------------------------------------------------
+
+
+#Listar Suspendidos--------------------------------------------------------------------------------
+class ListarSuspendidos(LoginRequiredMixin,TemplateView):
+    template_name = 'Reportes/reporteSuspendidos.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['clientes_suspendidos'] = Cliente.objects.filter(estado='Suspendidos')
+        return context
 #Fin de vista--------------------------------------------------------------------------------
