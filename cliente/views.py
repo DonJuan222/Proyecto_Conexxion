@@ -36,7 +36,9 @@ class ListarClientes(LoginRequiredMixin, View):
 
     def get(self, request):
         # Obtener los clientes con la fecha de pago y fecha de vencimiento más recientes de su factura
-        ultima_factura = Factura.objects.filter(cliente=OuterRef('pk')).order_by('-fecha_pago', '-fecha_vencimiento')
+        # ultima_factura = Factura.objects.filter(cliente=OuterRef('pk')).order_by('-fecha_pago', '-fecha_vencimiento')
+        
+        ultima_factura = Factura.objects.filter(cliente=OuterRef('pk'), tipo_pago='#Recibo').order_by('-fecha_pago', '-fecha_vencimiento')
         clientes = Cliente.objects.annotate(fecha_pago=Subquery(ultima_factura.values('fecha_pago')[:1]),
                                              fecha_vencimiento=Subquery(ultima_factura.values('fecha_vencimiento')[:1]))
 
