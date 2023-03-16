@@ -22,12 +22,19 @@ from django.forms import formset_factory
 #Decoradores permisos y Login
 from django.contrib.auth.decorators import login_required
 
-#Libreria para hacer los reportes
+#Libreria para hacer los reportes o trabajar con Excel
 from openpyxl import Workbook
+
 
 from django.db.models import OuterRef, Subquery
 
+#Librerias para trabajar con Imagenes
+from django.shortcuts import render
+from django.http import HttpResponse
+from PIL import Image, ImageDraw, ImageFont
 
+#Libreria para trabajar con Tiempo
+from datetime import date 
 
 # Crea una lista de los clientes, 10 por pagina------------------------------------------------------
 class ListarClientes(LoginRequiredMixin, View):
@@ -452,6 +459,55 @@ class GenerarFacturaPDF(LoginRequiredMixin,View):
 #Fin de vista--------------------------------------------------------------------------------------
 
 
+#Genera la factura en PDF--------------------------------------------------------------------------
+class GenerarIMG(LoginRequiredMixin,View):
+    login_url = '/login'
+    redirect_field_name = None
+    
+    def get(self, request, cliente_id):
+        from urllib.request import urlopen
+        from PIL import Image
+        cliente = Cliente.objects.get(id=cliente_id)
+        facturas = Factura.objects.filter(cliente=cliente)
+
+        # Crear una imagen en blanco para agregar las facturas
+        width = 800
+        height = 600
+        background_color = (255, 255, 255)  # blanco
+        image = Image.new('RGB', (width, height), background_color)
+
+        # Variables para controlar la posición de la imagen en la imagen principal
+        x_offset = 0
+        y_offset = 0
+
+        # Agregar las imágenes de las facturas a la imagen principal
+        for factura in facturas:
+            # Abrir la imagen de la factura desde su URL
+            factura_url = factura.detalle.imagen.url
+            factura_image = Image.open(urlopen(factura_url))
+
+            # Redimensionar la imagen de la factura para que quepa en la imagen principal
+            max_width = 300
+            max_height = 200
+            factura_image.thumbnail((max_width, max_height))
+
+            # Agregar la imagen de la factura a la imagen principal
+            image.paste(factura_image, (x_offset, y_offset))
+
+            # Actualizar las variables de posición para agregar la siguiente imagen en la posición correcta
+            x_offset += factura_image.width + 10  # Agregar un espacio de 10 píxeles entre las imágenes
+            if x_offset > width:
+                x_offset = 0
+                y_offset += factura_image.height + 10  # Agregar un espacio de 10 píxeles entre las filas de imágenes
+
+        # Guardar la imagen en un archivo temporal y retornarla como una respuesta HTTP
+        response = HttpResponse(content_type='image/png')
+        image.save(response, format='PNG')
+        response['Content-Disposition'] = f'attachment; filename=facturas_{cliente_id}.png'
+        return response
+
+#Fin de vista--------------------------------------------------------------------------------------
+
 
 #Accede a los modulos del manual de usuario---------------------------------------------#
 # class VerManualDeUsuario(LoginRequiredMixin, View):
@@ -489,27 +545,38 @@ class GenerarFacturaPDF(LoginRequiredMixin,View):
 
 
 #Generar los reportes de los clientes Supendidos---------------------------------------------#
-class ReporteSuspendidos(LoginRequiredMixin,TemplateView):
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Font
+
+class ReporteSuspendidos(LoginRequiredMixin, TemplateView):
     login_url = '/login'
     redirect_field_name = None
 
     def get(self, request, *args, **kwargs):
         # Seleccionar los clientes en estado "Suspendidos"
         clientes_suspendidos = Cliente.objects.filter(estado='Suspendidos')
-        
+
         # Crear el libro de trabajo de Excel
         wb = Workbook()
         ws = wb.active
         ws.title = "Clientes Suspendidos"
-        
+
         # Escribir los encabezados de la tabla
         ws['A1'] = 'Cédula'
         ws['B1'] = 'Ip'
         ws['C1'] = 'Nombre'
         ws['D1'] = 'Apellido'
         ws['E1'] = 'Telefono'
+        ws['F1'] = 'Mensaje'
+        ws['G1'] = 'WhatsApp'
+        ws['A1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['B1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['C1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['D1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['E1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['F1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['G1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
 
-        
         # Escribir los datos de los clientes
         for i, cliente in enumerate(clientes_suspendidos, start=2):
             ws.cell(row=i, column=1, value=cliente.cedula)
@@ -517,13 +584,102 @@ class ReporteSuspendidos(LoginRequiredMixin,TemplateView):
             ws.cell(row=i, column=3, value=cliente.nombre)
             ws.cell(row=i, column=4, value=cliente.apellido)
             ws.cell(row=i, column=5, value=cliente.telefono_uno)
-      
-        
+ 
+            ws.cell(row=i, column=6, value='="⚠Estimado cliente {nombre} {apellido} queremos recordarle que su factura de internet  esta vencida, recuerde realizar su pago. Sí, ya realizo el pago POR FAVOR omita este mensaje."'.format(nombre=cliente.nombre, apellido=cliente.apellido))
+
+            # Agregar la fórmula de WhatsApp para cada cliente
+            cell = ws.cell(row=i, column=7)
+            cell.value='=HYPERLINK("https://api.whatsapp.com/send?phone="&E{0}&"&text="&F{0}, "📲✔")'.format(i)
+            cell.style = 'Hyperlink'  # Aplicar el estilo de hipervínculo al texto
+
+        # Ajustar el ancho de las columnas
+        for col in ws.columns:
+            column = col[0].column_letter
+            if column in ('A', 'B', 'D'):
+                ws.column_dimensions[column].width = 15
+            elif column == 'C':
+                ws.column_dimensions[column].width = 30
+            elif column == 'E':
+                ws.column_dimensions[column].width = 20
+            elif column == 'F':
+                ws.column_dimensions[column].width = 25
+
         # Guardar el archivo y enviarlo como respuesta
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=clientes_suspendidos.xlsx'
         wb.save(response)
         return response
+
+    
+#Fin de vista--------------------------------------------------------------------------------
+
+
+#Generar los reportes de los clientes Para recoger equipo---------------------------------------------#
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Font
+
+class ReporteREquipo(LoginRequiredMixin, TemplateView):
+    login_url = '/login'
+    redirect_field_name = None
+
+    def get(self, request, *args, **kwargs):
+        # Seleccionar los clientes en estado "Suspendidos"
+        clientes_Requipos = Cliente.objects.filter(estado='REquipos')
+
+        # Crear el libro de trabajo de Excel
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Clientes Para Retiro o en Rojo"
+
+        # Escribir los encabezados de la tabla
+        ws['A1'] = 'Cédula'
+        ws['B1'] = 'Ip'
+        ws['C1'] = 'Nombre'
+        ws['D1'] = 'Apellido'
+        ws['E1'] = 'Telefono'
+        ws['F1'] = 'Mensaje'
+        ws['G1'] = 'WhatsApp'
+        ws['A1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['B1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['C1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['D1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['E1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['F1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['G1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+
+        # Escribir los datos de los clientes
+        for i, cliente in enumerate(clientes_Requipos, start=2):
+            ws.cell(row=i, column=1, value=cliente.cedula)
+            ws.cell(row=i, column=2, value=cliente.ip)
+            ws.cell(row=i, column=3, value=cliente.nombre)
+            ws.cell(row=i, column=4, value=cliente.apellido)
+            ws.cell(row=i, column=5, value=cliente.telefono_uno)
+ 
+            ws.cell(row=i, column=6, value='="⚠Estimado cliente {nombre} {apellido} queremos infórmale que, debido a que lleva más de un mes en mora, la empresa enviará a recoger los equipos y así se dará por terminado el contrato."'.format(nombre=cliente.nombre, apellido=cliente.apellido))
+
+            # Agregar la fórmula de WhatsApp para cada cliente
+            cell = ws.cell(row=i, column=7)
+            cell.value='=HYPERLINK("https://api.whatsapp.com/send?phone="&E{0}&"&text="&F{0}, "📲✔")'.format(i)
+            cell.style = 'Hyperlink'  # Aplicar el estilo de hipervínculo al texto
+
+        # Ajustar el ancho de las columnas
+        for col in ws.columns:
+            column = col[0].column_letter
+            if column in ('A', 'B', 'D'):
+                ws.column_dimensions[column].width = 15
+            elif column == 'C':
+                ws.column_dimensions[column].width = 30
+            elif column == 'E':
+                ws.column_dimensions[column].width = 20
+            elif column == 'F':
+                ws.column_dimensions[column].width = 25
+
+        # Guardar el archivo y enviarlo como respuesta
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=clientes_recoequipo.xlsx'
+        wb.save(response)
+        return response
+
     
 #Fin de vista--------------------------------------------------------------------------------
 
@@ -535,5 +691,16 @@ class ListarSuspendidos(LoginRequiredMixin,TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['clientes_suspendidos'] = Cliente.objects.filter(estado='Suspendidos')
+        return context
+#Fin de vista--------------------------------------------------------------------------------
+
+
+#Listar Clientes Recoger Equipos--------------------------------------------------------------------------------
+class ListarREquipos(LoginRequiredMixin,TemplateView):
+    template_name = 'Reportes/reporteREquipo.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['clientes_REquipos'] = Cliente.objects.filter(estado='REquipos')
         return context
 #Fin de vista--------------------------------------------------------------------------------

@@ -23,7 +23,11 @@ urlpatterns = [
     path('listarClientesRetirados', views.ListarClientesRetirados.as_view(), name='listarClientesRetirados'),
         
     path('listar_suspendidos/', views.ListarSuspendidos.as_view(), name='listar_suspendidos'),
+    path('listar_requipo/', views.ListarREquipos.as_view(), name='listar_requipo'),
     path('reporte_suspendidos/', views.ReporteSuspendidos.as_view(), name='reporte_suspendidos'),
+    path('reporte_requipo/', views.ReporteREquipo.as_view(), name='reporte_requipo'),
+
+    path('generar_imagen/<int:cliente_id>/', views.GenerarIMG.as_view(), name='generar_imagen'),
 
     # path('verManualDeUsuario/<str:pagina>/',views.VerManualDeUsuario.as_view(), name='verManualDeUsuario')
 ]

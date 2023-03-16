@@ -83,9 +83,11 @@
                                                 {% if fila.estado == 'Activos' %}
                                                 <td align="center" style="color: green;"> <em class="fa fa-check"></em></td>
                                                 {% elif fila.estado == 'Suspendidos' %}
-                                                <td align="center" style="color: orange;"><em class="fa fa-ban"></em></td>
+                                                <td align="center" style="color: orange;"><em class="fa fa-exclamation-triangle"></em></td>
                                                 {% elif fila.estado == 'Retiros' %}
                                                 <td align="center" style="color: red;"><em class="fa fa-times"></em></td>
+                                                {% elif fila.estado == 'REquipos' %}
+                                                <td align="center" style="color: red;"><em class="fa fa-ban"></em></td>
                                                 {% endif %}
                                                 <td>
                                                     <form method="post" action="{% url 'cambiar_estado_cliente' fila.id %}" >
@@ -93,6 +95,7 @@
                                                         <select name="estado" type="button" class="btn btn-secondary dropdown-toggle">
                                                             <option value="Activos" {% if fila.estado == 'Activos' %}selected{% endif %}>Activar</option>
                                                             <option value="Suspendidos" {% if fila.estado == 'Suspendidos' %}selected{% endif %}>Suspender</option>
+                                                            <option value="REquipos" {% if fila.estado == 'REquipos' %}selected{% endif %}>RecogerEqui</option>
                                                         </select>
                                                         <button type="submit" class="btn btn-primary">Cambiar estado</button>
                                                     </form>

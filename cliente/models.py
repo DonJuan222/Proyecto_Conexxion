@@ -58,6 +58,7 @@ class Cliente(models.Model):
     ESTADO_CHOICES = (
         ('Activos', 'Activos'),
         ('Suspendidos', 'Suspendidos'),
+        ('REquipos', 'REquipos'),
         ('Retiros', 'Retiros'),
     )
     ip = models.CharField(max_length=13, null=False, unique=True)

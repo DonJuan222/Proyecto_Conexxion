@@ -4,9 +4,9 @@
 
 <article class="content responsive-tables-page">
     <div class="title-block">
-        <h1 class="title"> Listado de Clientes Suspendidos o en Amarillo </h1>
+        <h1 class="title"> Listado de Clientes Para Retiro o en Rojo </h1>
         <br>
-        <a href="{% url 'reporte_suspendidos' %}" class="btn btn-primary">Descargar reporte en Excel</a>
+        <a href="{% url 'reporte_requipo' %}" class="btn btn-primary">Descargar reporte en Excel</a>
     </div>
     <section class="section">
         <div class="row">
@@ -41,7 +41,7 @@
                                             </tr>
                                           </thead>
                                           <tbody>
-                                            {% for cliente in clientes_suspendidos %}
+                                            {% for cliente in clientes_REquipos %}
                                               <tr>
                                                 <td>{{ cliente.cedula }}</td>
                                                 <td>{{ cliente.ip }}</td>
