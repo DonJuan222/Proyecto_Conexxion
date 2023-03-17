@@ -7,7 +7,9 @@
         <h1 class="title"> Listar facturas </h1>
         <p class="title-description"> Verifique las facturas agregadas</p>
         <br>
-        <a href="/generar_imagen/{{ cliente.id}}" class="btn btn-primary">Generar Imagen</a>
+        <a href="/todasfacturasPDF/{{ cliente.id }}" class="btn btn-primary"><em
+            class="fa fa-print"></em>Generar PDF</a>
+        
     </div>
     <section class="section">
         <div class="row">
@@ -91,3 +93,5 @@
     </section>
 </article>
 {% endblock %}
+
+<!-- <a href="{% url 'generar_imagen' cliente.id %}" class="btn btn-primary">Generar Imagen</a> -->

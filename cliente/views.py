@@ -32,6 +32,7 @@ from django.db.models import OuterRef, Subquery
 from django.shortcuts import render
 from django.http import HttpResponse
 from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
 
 #Libreria para trabajar con Tiempo
 from datetime import date 
@@ -105,12 +106,13 @@ class AgregarCliente(LoginRequiredMixin, View):
             municipio = form.cleaned_data['municipio']
             equipos = form.cleaned_data['equipos']         
             tipo_instalacion = form.cleaned_data['tipo_instalacion']  
-            cap_megas = form.cleaned_data['cap_megas']           
+            cap_megas = form.cleaned_data['cap_megas']        
+            ap = form.cleaned_data['ap']           
 
             cliente = Cliente(ip=ip, cedula=cedula, nombre=nombre, apellido=apellido, telefono_uno=telefono_uno,
                               telefonos_dos=telefonos_dos, valor_instalacion=valor_instalacion, fecha_instalacion=fecha_instalacion,
                               direccion=direccion,estado=estado,municipio=municipio, tipo_instalacion=tipo_instalacion,
-                              descripcion=descripcion,equipos=equipos,cap_megas=cap_megas)
+                              descripcion=descripcion,equipos=equipos,cap_megas=cap_megas,ap=ap)
             cliente.save()
             form = ClienteFormulario()
 
@@ -162,6 +164,7 @@ class EditarCliente(LoginRequiredMixin, View):
             equipos = form.cleaned_data['equipos']         
             tipo_instalacion = form.cleaned_data['tipo_instalacion']  
             cap_megas = form.cleaned_data['cap_megas']  
+            ap = form.cleaned_data['ap']  
 
             cliente.ip = ip
             cliente.cedula = cedula
@@ -178,6 +181,7 @@ class EditarCliente(LoginRequiredMixin, View):
             cliente.equipos = equipos
             cliente.tipo_instalacion = tipo_instalacion
             cliente.cap_megas = cap_megas
+            cliente.ap = ap
             
             cliente.save()
             form = ClienteFormulario(instance=cliente)
@@ -266,7 +270,8 @@ class Eliminar(LoginRequiredMixin, View):
                 municipio=cliente.municipio,
                 equipos=cliente.equipos,
                 tipo_instalacion=cliente.tipo_instalacion,
-                cap_megas=cliente.cap_megas
+                cap_megas=cliente.cap_megas,
+                ap=cliente.ap
             )
             cliente_retirado.save()
 
@@ -339,7 +344,8 @@ class EliminarClienteRetirado(LoginRequiredMixin, View):
                 municipio=cliente_retirado.municipio,
                 equipos=cliente_retirado.equipos,
                 tipo_instalacion=cliente_retirado.tipo_instalacion,
-                cap_megas=cliente_retirado.cap_megas
+                cap_megas=cliente_retirado.cap_megas,
+                ap=cliente_retirado.ap
             )
             cliente_retirado.delete()
             messages.success(
@@ -352,6 +358,8 @@ class EliminarClienteRetirado(LoginRequiredMixin, View):
 
 # Crea una lista de la factura, 10 por pagina--------------------------------------------------------
 class ListarFactura(LoginRequiredMixin,View):
+    login_url = '/login'
+    redirect_field_name = None
 
     def get(self, request, cliente_id):
         cliente = Cliente.objects.get(id=cliente_id)
@@ -460,53 +468,70 @@ class GenerarFacturaPDF(LoginRequiredMixin,View):
 
 
 #Genera la factura en PDF--------------------------------------------------------------------------
-class GenerarIMG(LoginRequiredMixin,View):
+class TodasFacturasPDF(LoginRequiredMixin,View):
     login_url = '/login'
     redirect_field_name = None
-    
-    def get(self, request, cliente_id):
-        from urllib.request import urlopen
-        from PIL import Image
-        cliente = Cliente.objects.get(id=cliente_id)
-        facturas = Factura.objects.filter(cliente=cliente)
 
-        # Crear una imagen en blanco para agregar las facturas
-        width = 800
-        height = 600
-        background_color = (255, 255, 255)  # blanco
-        image = Image.new('RGB', (width, height), background_color)
+    def get(self, request, p):
+        import io
+        from reportlab.pdfgen import canvas
+        from django.http import FileResponse
+        from datetime import date  
 
-        # Variables para controlar la posición de la imagen en la imagen principal
-        x_offset = 0
-        y_offset = 0
+        factura = Factura.objects.get(id=p)       
+        data = { 
+            'nombre':factura.cliente.nombre,
+            'apellido': factura.cliente.apellido,
+            'cedula': factura.cliente.cedula,
+            'detalle': factura.detalle,
+            'valor_pago': factura.valor_pago,
+            'fecha': factura.fecha_pago,
+            'valido_hasta': factura.fecha_vencimiento,
+            'fecha':  date.today(),
+        }
+        nombre_factura = "factura_%s.pdf" % (factura.id)
 
-        # Agregar las imágenes de las facturas a la imagen principal
-        for factura in facturas:
-            # Abrir la imagen de la factura desde su URL
-            factura_url = factura.detalle.imagen.url
-            factura_image = Image.open(urlopen(factura_url))
+        pdf = render_to_pdf('PDF/todasFacturas.html', {'datos': [data]})
 
-            # Redimensionar la imagen de la factura para que quepa en la imagen principal
-            max_width = 300
-            max_height = 200
-            factura_image.thumbnail((max_width, max_height))
+        response = HttpResponse(pdf,content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % nombre_factura
 
-            # Agregar la imagen de la factura a la imagen principal
-            image.paste(factura_image, (x_offset, y_offset))
-
-            # Actualizar las variables de posición para agregar la siguiente imagen en la posición correcta
-            x_offset += factura_image.width + 10  # Agregar un espacio de 10 píxeles entre las imágenes
-            if x_offset > width:
-                x_offset = 0
-                y_offset += factura_image.height + 10  # Agregar un espacio de 10 píxeles entre las filas de imágenes
-
-        # Guardar la imagen en un archivo temporal y retornarla como una respuesta HTTP
-        response = HttpResponse(content_type='image/png')
-        image.save(response, format='PNG')
-        response['Content-Disposition'] = f'attachment; filename=facturas_{cliente_id}.png'
-        return response
+        return response  
 
 #Fin de vista--------------------------------------------------------------------------------------
+
+
+## Genera la factura en IMG--------------------------------------------------------------------------
+# class GenerarIMG(LoginRequiredMixin,View):
+#     login_url = '/login'
+#     redirect_field_name = None
+    
+#     def get(self, request, cliente_id):
+#         cliente = Cliente.objects.get(id=cliente_id)
+#         facturas = Factura.objects.filter(cliente=cliente)
+
+#         # Crea la imagen
+#         image = Image.new('RGB', (600, 800), color='white')
+#         draw = ImageDraw.Draw(image)
+#         font = ImageFont.truetype('arial.ttf', size=20)
+
+#         y_text = 50
+#         for factura in facturas:
+#             factura_text = f"Factura #{factura.id} - Fecha: {factura.fecha_pago} - Valor: {factura.valor_pago}"
+#             draw.text((50, y_text), factura_text, font=font, fill=(0, 0, 0))
+#             y_text += 50
+
+#         # Guarda la imagen en un objeto BytesIO
+#         img_byte_arr = BytesIO()
+#         image.save(img_byte_arr, format='PNG')
+#         img_byte_arr.seek(0)
+
+#         # Devuelve la imagen como respuesta HTTP
+#         response = HttpResponse(content_type="image/png")
+#         response.write(img_byte_arr.read())
+#         return response
+
+## Fin de vista--------------------------------------------------------------------------------------
 
 
 #Accede a los modulos del manual de usuario---------------------------------------------#
@@ -684,8 +709,84 @@ class ReporteREquipo(LoginRequiredMixin, TemplateView):
 #Fin de vista--------------------------------------------------------------------------------
 
 
+#Generar los reportes de los clientes Para recoger equipo---------------------------------------------#
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Font
+
+class ReporteAp(LoginRequiredMixin, TemplateView):
+    login_url = '/login'
+    redirect_field_name = None
+
+    def get(self, request, *args, **kwargs):
+        ap_filtro = request.GET.get('ap', '').lower()  # Convertir a minúsculas y asignar un valor predeterminado en caso de que no se haya seleccionado ningún AP
+        # Seleccionar los clientes filtrados
+        cliente_filtro = Cliente.objects.filter(ap__nombreAp=ap_filtro)
+
+        # Crear el libro de trabajo de Excel
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Reporte de Fallas"
+
+        # Escribir los encabezados de la tabla
+        ws['A1'] = 'Cédula'
+        ws['B1'] = 'Ip'
+        ws['C1'] = 'Nombre'
+        ws['D1'] = 'Apellido'
+        ws['E1'] = 'Telefono'
+        ws['F1'] = 'Mensaje'
+        ws['G1'] = 'AP'
+        ws['H1'] = 'WhatsApp'
+        ws['A1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['B1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['C1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['D1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['E1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['F1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['G1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+        ws['h1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+
+        # Escribir los datos de los clientes
+        for i, cliente in enumerate(cliente_filtro, start=2):
+            ws.cell(row=i, column=1, value=cliente.cedula)
+            ws.cell(row=i, column=2, value=cliente.ip)
+            ws.cell(row=i, column=3, value=cliente.nombre)
+            ws.cell(row=i, column=4, value=cliente.apellido)
+            ws.cell(row=i, column=5, value=cliente.telefono_uno)
+ 
+            ws.cell(row=i, column=6, value='="⚠Estimado cliente {nombre} {apellido} queremos infórmale que estamos presentando fallas en su servicio de internet, estamos trabajando para solucionarlo."'.format(nombre=cliente.nombre, apellido=cliente.apellido))
+            ws.cell(row=i, column=7, value=cliente.ap.nombreAp)
+            # Agregar la fórmula de WhatsApp para cada cliente
+            cell = ws.cell(row=i, column=8)
+            cell.value='=HYPERLINK("https://api.whatsapp.com/send?phone="&E{0}&"&text="&F{0}, "📲✔")'.format(i)
+            cell.style = 'Hyperlink'  # Aplicar el estilo de hipervínculo al texto
+
+        # Ajustar el ancho de las columnas
+        for col in ws.columns:
+            column = col[0].column_letter
+            if column in ('A', 'B', 'D'):
+                ws.column_dimensions[column].width = 15
+            elif column == 'C':
+                ws.column_dimensions[column].width = 30
+            elif column == 'E':
+                ws.column_dimensions[column].width = 20
+            elif column == 'F':
+                ws.column_dimensions[column].width = 25
+
+        # Guardar el archivo y enviarlo como respuesta
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=reporte_fallas.xlsx'
+        wb.save(response)
+        return response
+
+    
+#Fin de vista--------------------------------------------------------------------------------
+
+
 #Listar Suspendidos--------------------------------------------------------------------------------
 class ListarSuspendidos(LoginRequiredMixin,TemplateView):
+    login_url = '/login'
+    redirect_field_name = None
+
     template_name = 'Reportes/reporteSuspendidos.html'
 
     def get_context_data(self, **kwargs):
@@ -697,10 +798,34 @@ class ListarSuspendidos(LoginRequiredMixin,TemplateView):
 
 #Listar Clientes Recoger Equipos--------------------------------------------------------------------------------
 class ListarREquipos(LoginRequiredMixin,TemplateView):
+    login_url = '/login'
+    redirect_field_name = None
+
     template_name = 'Reportes/reporteREquipo.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['clientes_REquipos'] = Cliente.objects.filter(estado='REquipos')
         return context
+#Fin de vista--------------------------------------------------------------------------------
+
+
+#Listar Clientes Recoger Equipos--------------------------------------------------------------------------------
+class ListarClientesAp(LoginRequiredMixin, TemplateView):
+    login_url = '/login'
+    redirect_field_name = None
+    template_name = 'Reportes/reportesAp.html'
+
+    def get(self, request):
+        aps = Ap.objects.all()
+        ap_filtro = request.GET.get('ap', '').lower()  # Convertir a minúsculas y asignar un valor predeterminado en caso de que no se haya seleccionado ningún AP
+        if ap_filtro:
+            clientes = Cliente.objects.filter(ap__nombreAp=ap_filtro)
+
+        else:
+            clientes = Cliente.objects.all()
+        contexto = {'clientes': clientes, 'aps': aps}
+        return render(request, 'Reportes/reportesAp.html', contexto)
+
+
 #Fin de vista--------------------------------------------------------------------------------

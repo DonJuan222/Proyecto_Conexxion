@@ -53,6 +53,21 @@ class Tipo_Instalacion(models.Model):
 # ---------------------------------------------------------------------------------------------------
 
 
+# ------------------------------------------Tipo_Instalacion-----------------------------------------
+class Ap(models.Model):
+    nombreAp = models.CharField(max_length=30,blank=True,null=False)
+
+    def __str__(self):
+        return self.nombreAp
+
+    class Meta:
+        db_table = 'Ap'
+        verbose_name = 'Ap'
+        verbose_name_plural = 'Ap'
+        ordering = ['id']
+# ---------------------------------------------------------------------------------------------------
+
+
 # ------------------------------------------Cliente--------------------------------------------------
 class Cliente(models.Model):
     ESTADO_CHOICES = (
@@ -76,6 +91,7 @@ class Cliente(models.Model):
     equipos = models.ForeignKey(Equipos, on_delete=models.SET_NULL, null=True, blank=True)
     tipo_instalacion = models.ForeignKey(Tipo_Instalacion, on_delete=models.SET_NULL, null=True, blank=True)
     cap_megas = models.CharField(max_length=25, null=True, blank=True)
+    ap = models.ForeignKey(Ap,on_delete=models.SET_NULL,null=True, blank=True)
 
     class Meta:
         db_table = 'Cliente'
@@ -135,6 +151,7 @@ class ClienteRetirado(models.Model):
     equipos = models.ForeignKey(Equipos, on_delete=models.SET_NULL, null=True, blank=True)
     tipo_instalacion = models.ForeignKey(Tipo_Instalacion, on_delete=models.SET_NULL, null=True, blank=True)
     cap_megas = models.CharField(max_length=25, null=True, blank=True)
+    ap = models.ForeignKey(Ap,on_delete=models.SET_NULL,null=True, blank=True)
     fecha_retirado = models.DateField(auto_now_add=True, blank=True, null=True)
 
     class Meta:

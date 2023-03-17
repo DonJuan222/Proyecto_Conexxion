@@ -6,7 +6,7 @@ class ClienteFormulario(forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ['ip','cedula','nombre','apellido','telefono_uno','telefonos_dos','valor_instalacion','fecha_instalacion','direccion',
-                  'estado','descripcion','municipio','equipos','tipo_instalacion','cap_megas']
+                  'estado','descripcion','municipio','equipos','tipo_instalacion','cap_megas','ap']
         labels = {
         'ip': 'Ip del cliente',
         'cedula': 'Cedula del cliente',
@@ -22,6 +22,7 @@ class ClienteFormulario(forms.ModelForm):
         'equipos': 'Equipos',
         'tipo_instalacion': 'Tipo de Instalacion',
         'cap_megas': 'Megas contratadas',
+        'ap': 'Conectado al Ap',
         
         }
         widgets = {
@@ -36,9 +37,8 @@ class ClienteFormulario(forms.ModelForm):
         'fecha_instalacion':forms.DateInput(format=('%d-%m-%Y'),attrs={'id':'fecha_instalacion','class':'form-control','type':'date'} ),
         'direccion': forms.TextInput(attrs={'class':'form-control','id':'direccion','placeholder':'Direccion del cliente'}),                                                                       
         'descripcion': forms.TextInput(attrs={'class':'form-control','id':'descripcion','placeholder':'Direccion del cliente'}),
-        'municipio': forms.TextInput(attrs={'class':'form-control','id':'municipio','placeholder':'Direccion del cliente'}),
-        'cap_megas': forms.TextInput(attrs={'class':'form-control','id':'cap_megas','placeholder':'Megas Contratadas'}),
         
+        'cap_megas': forms.TextInput(attrs={'class':'form-control','id':'cap_megas','placeholder':'Megas Contratadas'}),
         }
 
 class FacturaForm(forms.ModelForm):

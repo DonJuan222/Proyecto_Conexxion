@@ -24,11 +24,13 @@ urlpatterns = [
         
     path('listar_suspendidos/', views.ListarSuspendidos.as_view(), name='listar_suspendidos'),
     path('listar_requipo/', views.ListarREquipos.as_view(), name='listar_requipo'),
+    path('listar_reportAp/', views.ListarClientesAp.as_view(), name='listar_reportAp'),
     path('reporte_suspendidos/', views.ReporteSuspendidos.as_view(), name='reporte_suspendidos'),
     path('reporte_requipo/', views.ReporteREquipo.as_view(), name='reporte_requipo'),
+    path('reporte_ap/', views.ReporteAp.as_view(), name='reporte_ap'),
 
-    path('generar_imagen/<int:cliente_id>/', views.GenerarIMG.as_view(), name='generar_imagen'),
-
+    # path('generar_imagen/<int:cliente_id>/',views.GenerarIMG.as_view(), name='generar_imagen'),
+    path('todasfacturasPDF/<int:p>',views.TodasFacturasPDF.as_view(), name='todasfacturasPDF'),
     # path('verManualDeUsuario/<str:pagina>/',views.VerManualDeUsuario.as_view(), name='verManualDeUsuario')
 ]
 

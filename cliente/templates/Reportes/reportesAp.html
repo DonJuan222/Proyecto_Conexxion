@@ -4,10 +4,12 @@
 
 <article class="content responsive-tables-page">
     <div class="title-block">
-        <h1 class="title"> Listado de Clientes Suspendidos o en Amarillo </h1>
+        <h1 class="title"> Filtrar Clientes por Ap </h1>
         <br>
-        <a href="{% url 'reporte_suspendidos' %}" class="btn btn-primary">Descargar reporte en Excel</a>
+        <a href="{% url 'reporte_ap' %}?ap={{ request.GET.ap  }}" class="btn btn-primary">Descargar reporte en Excel</a>
+
     </div>
+
     <section class="section">
         <div class="row">
             <div class="col-md-12">
@@ -26,6 +28,16 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-block">
+                            <form method="get">
+                                <label for="ap">Filtrar por AP:</label>
+                                <select name="ap" id="ap">
+                                    <option value="">Todos los APs</option>
+                                    {% for ap in aps %}
+                                        <option value="{{ ap.nombreAp }}">{{ ap.nombreAp }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit">Filtrar</button>
+                            </form>
                             <section class="example">
                                 <div class="table-responsive">
                                     <table id="example2" class="table table-striped table-bordered table-hover">
@@ -37,10 +49,11 @@
                                               <th>Apellido</th>
                                               <th>Teléfono</th>
                                               <th>Dirección</th>
+                                              <th>AP</th>
                                             </tr>
                                           </thead>
                                           <tbody>
-                                            {% for cliente in clientes_suspendidos %}
+                                            {% for cliente in clientes %}
                                               <tr>
                                                 <td>{{ cliente.cedula }}</td>
                                                 <td>{{ cliente.ip }}</td>
@@ -48,6 +61,7 @@
                                                 <td>{{ cliente.apellido }}</td>
                                                 <td>{{ cliente.telefono_uno }}</td>
                                                 <td>{{ cliente.direccion }}</td>
+                                                <td>{{ cliente.ap }}</td>
                                               </tr>
                                             {% endfor %}
                                           </tbody>
