@@ -30,7 +30,7 @@ urlpatterns = [
     path('reporte_ap/', views.ReporteAp.as_view(), name='reporte_ap'),
 
     # path('generar_imagen/<int:cliente_id>/',views.GenerarIMG.as_view(), name='generar_imagen'),
-    path('todasfacturasPDF/<int:p>',views.TodasFacturasPDF.as_view(), name='todasfacturasPDF'),
+    # path('todasfacturasPDF/<int:cliente_id>',views.TodasFacturasPDF.as_view(), name='todasfacturasPDF'),
     # path('verManualDeUsuario/<str:pagina>/',views.VerManualDeUsuario.as_view(), name='verManualDeUsuario')
 ]
 

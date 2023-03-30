@@ -46,7 +46,8 @@ class Login(View):
                 return HttpResponseRedirect('/')
             else:
                 # De lo contrario lanzara el mismo formulario
-                return render(request, '/login.html', {'form': form})
+                return render(request, 'login.html', {'form': form})
+            
 
     # Si se llega por GET crearemos un formulario en blanco
     def get(self, request):
@@ -150,7 +151,7 @@ class Perfil(LoginRequiredMixin, View):
                         'nombreUsuario': perf.username}
 
             contexto = complementarContexto(contexto, request.user)
-            return render(request, '/perfil/perfil.html', contexto)
+            return render(request, 'perfil/perfil.html', contexto)
 
         elif modo == 'clave':
             perf = Usuario.objects.get(id=p)

@@ -467,38 +467,28 @@ class GenerarFacturaPDF(LoginRequiredMixin,View):
 #Fin de vista--------------------------------------------------------------------------------------
 
 
-#Genera la factura en PDF--------------------------------------------------------------------------
-class TodasFacturasPDF(LoginRequiredMixin,View):
-    login_url = '/login'
-    redirect_field_name = None
+# #Genera la factura en PDF--------------------------------------------------------------------------
+# class TodasFacturasPDF(LoginRequiredMixin, View):
+#     login_url = '/login'
+#     redirect_field_name = None
+    
+#     def get(self, request, cliente_id):
+#         cliente = Cliente.objects.get(id=cliente_id)
+#         facturas = Factura.objects.filter(cliente=cliente)
+#         data = {'datos': facturas}
 
-    def get(self, request, p):
-        import io
-        from reportlab.pdfgen import canvas
-        from django.http import FileResponse
-        from datetime import date  
+#         nombre_factura = f"facturas_{cliente_id}.pdf"
 
-        factura = Factura.objects.get(id=p)       
-        data = { 
-            'nombre':factura.cliente.nombre,
-            'apellido': factura.cliente.apellido,
-            'cedula': factura.cliente.cedula,
-            'detalle': factura.detalle,
-            'valor_pago': factura.valor_pago,
-            'fecha': factura.fecha_pago,
-            'valido_hasta': factura.fecha_vencimiento,
-            'fecha':  date.today(),
-        }
-        nombre_factura = "factura_%s.pdf" % (factura.id)
+#         pdf = render_to_pdf('PDF/todasFacturas.html', {'datos': data, 'cliente': cliente})
 
-        pdf = render_to_pdf('PDF/todasFacturas.html', {'datos': [data]})
 
-        response = HttpResponse(pdf,content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="%s"' % nombre_factura
+#         response = HttpResponse(pdf, content_type='application/pdf')
+#         response['Content-Disposition'] = f'attachment; filename="{nombre_factura}"'
 
-        return response  
+#         return response
 
-#Fin de vista--------------------------------------------------------------------------------------
+
+# #Fin de vista--------------------------------------------------------------------------------------
 
 
 ## Genera la factura en IMG--------------------------------------------------------------------------

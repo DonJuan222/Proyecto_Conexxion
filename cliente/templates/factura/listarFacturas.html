@@ -6,10 +6,6 @@
     <div class="title-block">
         <h1 class="title"> Listar facturas </h1>
         <p class="title-description"> Verifique las facturas agregadas</p>
-        <br>
-        <a href="/todasfacturasPDF/{{ cliente.id }}" class="btn btn-primary"><em
-            class="fa fa-print"></em>Generar PDF</a>
-        
     </div>
     <section class="section">
         <div class="row">
@@ -64,7 +60,7 @@
                                             <td>
                                                 <div class="btn-group">
 
-                                                    <button type="button" class="btn btn-info dropdown-toggle"
+                                                    <button type="button" class="btn btn-primary dropdown-toggle"
                                                         data-toggle="dropdown" aria-haspopup="true"
                                                         aria-expanded="false"><i class="fa fa-wrench"></i></button>
 
@@ -82,9 +78,13 @@
                                         </tr>
                                         {% endfor %}
                                     </tbody>
+                                    
 
                                 </table>
+                                
                             </div>
+                            
+                            
                         </section>
                     </div>
                 </div>
@@ -95,3 +95,5 @@
 {% endblock %}
 
 <!-- <a href="{% url 'generar_imagen' cliente.id %}" class="btn btn-primary">Generar Imagen</a> -->
+<!-- <a href="{% url 'todasfacturasPDF' cliente_id %}" class="btn btn-info">Generar PDF</a> -->
+
