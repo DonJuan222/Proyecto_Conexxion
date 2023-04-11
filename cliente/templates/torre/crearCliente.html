@@ -1,0 +1,323 @@
+{% extends "comun/base.html" %}
+
+{% block content %}
+
+
+<script>
+	
+function clienteCamposOcultos(esto)
+{
+	let check = esto.checked
+
+	let segTelefono = document.getElementById('div_telefono2')
+	let segCorreo = document.getElementById('div_correo2')
+
+
+	console.log(check)
+	if(check)
+	{
+		console.log("MOSTRAR!!")
+		//$(document).ready(function(){
+		segTelefono.style = 'display: block;';
+		segCorreo.style = 'display: block;';
+							//		}
+							//		)
+	}
+
+	else
+	{
+		console.log("ESCONDER :(")
+		//$(document).ready(function(){
+		segTelefono.style = 'display: none;';
+		segCorreo.style = 'display: none;';
+									//}
+									//)
+	}
+
+}	
+
+</script>
+
+<article class="content forms-page">
+	    <div class="title-block">
+	    	{% if editar %}
+	      <h3 class="title">Editar cliente</h3>
+          <p class="title-description">Cambie los datos del cliente</p>
+	    	{% else %}
+          <h3 class="title">Agregar cliente</h3>
+          <p class="title-description">Introduzca los datos del cliente</p>
+          {% endif %}
+        </div>
+<section class="section">
+    <div class="row sameheight-container">
+	<div class="col-md-12">
+
+
+
+ {% for error in form.non_field_errors %}
+<div class="card card-primary">
+            <div class="card-header"> 
+            	<div class="header-block">
+            		<p class="title">{{ form.errors }}</p>
+  {% endfor %}
+
+		{% if modo == "agregado" %}
+		{% if messages %}
+        {% for message in messages %}
+		 <div class="card card-primary">
+            <div class="card-header"> 
+            	<div class="header-block">
+            		<em class="fa fa-check"></em>
+                        <p class="title">{{ message }}</p>
+                    </div>
+                </div>
+         </div>
+        {%endfor%}
+		{%endif%}
+		{%endif%}
+
+		{% if modo == "editado" %}
+		{% if messages %}
+        {% for message in messages %}
+		 <div class="card card-primary">
+            <div class="card-header"> 
+            	<div class="header-block">
+            		<em class="fa fa-check"></em>
+                        <p class="title">{{ message }}</p>
+                    </div>
+                </div>
+         </div>
+        {%endfor%}
+		{%endif%}
+		{%endif%}
+
+<!-------------------   FORMULARIO PARA AGREGAR CLIENTE ---------------------------------->
+		<div class="card card-block sameheight-item">
+			<form role="form" method="POST" onsubmit="return validarTodo('cliente')">
+			{% csrf_token %}
+
+
+<!----------------   CAMPOS DE IP  ---------------------->
+
+<label for="{{ form.ip.name }}">
+	{{form.ip.label}}
+</label>
+<div class="row form-group">
+	<div class="col-10">
+	  {{form.ip}}
+  </div>
+</div>
+
+<!------------------   FIN DE CAMPOS  ------------------------------------------>
+
+
+
+<!----------------   CAMPOS DE CEDULA  ---------------------->
+
+				<label for="{{ form.cedula.name }}">
+					{{form.cedula.label}}
+				</label>
+			<div class="row form-group">
+                    <div class="col-10">
+                      {{form.cedula}}
+                  </div>
+            </div>
+
+<!------------------   FIN DE CAMPOS  ------------------------------------------>
+
+
+<!-----------------   CAMPO DEL NOMBRE DEL CLIENTE ------------------>
+
+			<div class="form-group">
+				<label for="{{ form.nombre.name }}">
+					{{form.nombre.label}}
+				</label>
+					{{form.nombre}}
+			</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DEL APELLIDO DEL CLIENTE ------------------>
+
+			<div class="form-group">
+				<label for="{{ form.apellido.name }}">
+					{{form.apellido.label}}
+				</label>
+					{{form.apellido}}
+			</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE TELEFONO DEL CLIENTE ------------------>
+
+<div class="form-group">
+	<label for="{{ form.telefono_uno.name }}">
+		{{form.telefono_uno.label}}
+	</label>
+		{{form.telefono_uno}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE TELEFONO DOS DEL CLIENTE ------------------>
+
+<div class="form-group">
+	<label for="{{ form.telefonos_dos.name }}">
+		{{form.telefonos_dos.label}}
+	</label>
+		{{form.telefonos_dos}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE valor_instalacion DEL CLIENTE ------------------>
+
+<div class="form-group">
+	<label for="{{ form.valor_instalacion.name }}">
+		{{form.valor_instalacion.label}}
+	</label>
+		{{form.valor_instalacion}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE FECHA DE INSTALACION DEL CLIENTE ------------------>
+
+			<div class="form-group">
+				<label for="{{ form.fecha_instalacion.name }}">
+					{{form.fecha_instalacion.label}}
+				</label>
+					{{form.fecha_instalacion}}
+			</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE LA MUNICIPIO ------------------>
+
+<div class="form-group">
+	<label for="{{ form.municipio.name }}">
+		{{form.municipio.label}}
+	</label>
+		{{form.municipio}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE AP ------------------>
+
+<div class="form-group">
+	<label for="{{ form.ap.name }}">
+		{{form.ap.label}}
+	</label>
+		{{form.ap}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE LA DIRECCION DEL CLIENTE ------------------>
+
+<div class="form-group">
+	<label for="{{ form.direccion.name }}">
+		{{form.direccion.label}}
+	</label>
+		{{form.direccion}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE DESCRIPCION ------------------>
+
+<div class="form-group" id="div_telefono2">
+	<label for="{{ form.descripcion.name }}">
+		{{form.descripcion.label}}
+	</label>
+		{{form.descripcion}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<div class="form-group" id="div_telefono2">
+	<label for="{{ form.cap_megas.name }}">
+		{{form.cap_megas.label}}
+	</label>
+		{{form.cap_megas}}
+</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE ESTADO ------------------>
+
+			<div class="form-group">
+				<label for="{{ form.estado.name }}">
+					{{form.estado.label}}
+				</label>
+					{{form.estado}}
+			</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO TIPO DE INSTALACION DEL CLIENTE ------------------>
+
+			<div class="form-group">
+				<label for="{{ form.tipo_instalacion.name }}">
+					{{form.tipo_instalacion.label}}
+				</label>
+					{{form.tipo_instalacion}}
+			</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-----------------   CAMPO DE EQUIPOS ------------------>
+
+			<div class="form-group" id="div_correo2">
+				<label for="{{ form.equipos.name }}">
+					{{form.equipos.label}}
+				</label>
+					{{form.equipos}}
+			</div>
+
+<!-----------------   FIN DE CAMPOS ---------------------------------->
+
+
+<!-- ---------------   CAMPO DE FECHA RETIRADO ------------------>
+<!-- 
+<div class="form-group" id="div_telefono2">
+	<label for="{{ form.fecha_retirado.name }}">
+		{{form.fecha_retirado.label}}
+	</label>
+		{{form.fecha_retirado}}
+</div> -->
+
+<!-----------------   FIN DE CAMPOS -------------------------------- -->
+
+
+<!------------------------------- BOTON DE CREAR ------------------------------------>
+		<div class="form-group">
+            <button type="submit" class="btn btn-primary">Crear</button>
+        </div>
+<!---------------------------------- FIN DE BOTON ---------------------------------->
+
+
+			</form>
+<!----------------------------------- FIN DEL FORMULARIO -------------------------->
+
+
+		</div>
+	</div>
+	</div>
+</section>
+</article>
+{% endblock %}

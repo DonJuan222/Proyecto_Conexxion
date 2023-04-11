@@ -6,6 +6,7 @@ from .views import crear_factura
 urlpatterns = [
 
     path('listarClientes', views.ListarClientes.as_view(), name='listarClientes'),
+    path('listarClientesTorre', views.ListarClientesTorre.as_view(), name='listarClientesTorre'),
     path('cambiar_estado/<int:cliente_id>/', views.ListarClientes.as_view(), name='cambiar_estado_cliente'),
     path('agregarCliente', views.AgregarCliente.as_view(), name='agregarCliente'),
     # path('importarClientes', import_clientes, name='importarClientes'),
@@ -32,5 +33,6 @@ urlpatterns = [
     # path('generar_imagen/<int:cliente_id>/',views.GenerarIMG.as_view(), name='generar_imagen'),
     # path('todasfacturasPDF/<int:cliente_id>',views.TodasFacturasPDF.as_view(), name='todasfacturasPDF'),
     # path('verManualDeUsuario/<str:pagina>/',views.VerManualDeUsuario.as_view(), name='verManualDeUsuario')
+    
 ]
 

@@ -5,13 +5,12 @@ from .models import Cliente,Factura
 class ClienteFormulario(forms.ModelForm):
     class Meta:
         model = Cliente
-        fields = ['ip','cedula','nombre','apellido','telefono_uno','telefonos_dos','valor_instalacion','fecha_instalacion','direccion',
+        fields = ['ip','cedula','nombre','telefono_uno','telefonos_dos','valor_instalacion','fecha_instalacion','direccion',
                   'estado','descripcion','municipio','equipos','tipo_instalacion','cap_megas','ap']
         labels = {
         'ip': 'Ip del cliente',
         'cedula': 'Cedula del cliente',
-        'nombre': 'Nombre del cliente',
-        'apellido': 'Apellido del cliente',
+        'nombre': 'Nombre y Apellido del cliente',
         'telefono_uno': 'Telefono del cliente',
         'telefonos_dos': 'Segundo telefono (Opcional)',
         'valor_instalacion': 'Valor de Instalacion',
@@ -30,7 +29,6 @@ class ClienteFormulario(forms.ModelForm):
         'ip': forms.TextInput(attrs={'placeholder': 'Inserte la Ip del Cliente','id':'ip','class':'form-control'} ),
         'cedula': forms.TextInput(attrs={'placeholder': 'Inserte la cedula de identidad del cliente','id':'cedula','class':'form-control'} ),
         'nombre': forms.TextInput(attrs={'placeholder': 'Inserte el nombre del cliente','id':'nombre','class':'form-control'}),
-        'apellido': forms.TextInput(attrs={'class':'form-control','id':'apellido','placeholder':'El apellido del cliente'}),
         'telefono_uno': forms.TextInput(attrs={'class':'form-control','id':'telefono_uno','placeholder':'Telefono del cliente'}), 
         'telefonos_dos': forms.TextInput(attrs={'class':'form-control','id':'telefonos_dos','placeholder':'Segundo telefono del cliente'}),                                                                       
         'valor_instalacion': forms.TextInput(attrs={'class':'form-control','id':'valor_instalacion','placeholder':'Valor de Instalacion del cliente'}),                                                                                                     

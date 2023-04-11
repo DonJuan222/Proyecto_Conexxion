@@ -64,6 +64,23 @@ class ListarClientes(LoginRequiredMixin, View):
     
 # Fin de vista---------------------------------------------------------------------------------------
 
+
+# Crea una lista de los clientes, 10 por pagina------------------------------------------------------
+class ListarClientesTorre(LoginRequiredMixin, View):
+    login_url = '/login'
+    redirect_field_name = None
+
+    def get(self, request):
+        from django.db import models
+        # Saca una lista de todos los clientes de la BDD
+        clientes_torre = Cliente.objects.all()
+        contexto = {'tabla': clientes_torre}
+        contexto = complementarContexto(contexto, request.user)
+
+        return render(request, 'torre/listarClientesTorre.html', contexto)
+# Fin de vista---------------------------------------------------------------------------------------
+
+
 # Crea una lista de los clientes, 10 por pagina------------------------------------------------------
 class ListarClientesRetirados(LoginRequiredMixin, View):
     login_url = '/login'
@@ -95,7 +112,6 @@ class AgregarCliente(LoginRequiredMixin, View):
             ip = form.cleaned_data['ip']
             cedula = form.cleaned_data['cedula']
             nombre = form.cleaned_data['nombre']
-            apellido = form.cleaned_data['apellido']
             telefono_uno = form.cleaned_data['telefono_uno']
             telefonos_dos = form.cleaned_data['telefonos_dos']
             valor_instalacion = form.cleaned_data['valor_instalacion']
@@ -106,13 +122,14 @@ class AgregarCliente(LoginRequiredMixin, View):
             municipio = form.cleaned_data['municipio']
             equipos = form.cleaned_data['equipos']         
             tipo_instalacion = form.cleaned_data['tipo_instalacion']  
-            cap_megas = form.cleaned_data['cap_megas']        
+            cap_megas = form.cleaned_data['cap_megas'] 
+            nombre_tecnico = form.cleaned_data['nombre_tecnico']   
             ap = form.cleaned_data['ap']           
 
-            cliente = Cliente(ip=ip, cedula=cedula, nombre=nombre, apellido=apellido, telefono_uno=telefono_uno,
+            cliente = Cliente(ip=ip, cedula=cedula, nombre=nombre, telefono_uno=telefono_uno,
                               telefonos_dos=telefonos_dos, valor_instalacion=valor_instalacion, fecha_instalacion=fecha_instalacion,
                               direccion=direccion,estado=estado,municipio=municipio, tipo_instalacion=tipo_instalacion,
-                              descripcion=descripcion,equipos=equipos,cap_megas=cap_megas,ap=ap)
+                              descripcion=descripcion,equipos=equipos,cap_megas=cap_megas,nombre_tecnico=nombre_tecnico,ap=ap)
             cliente.save()
             form = ClienteFormulario()
 
@@ -152,7 +169,6 @@ class EditarCliente(LoginRequiredMixin, View):
             ip = form.cleaned_data['ip']
             cedula = form.cleaned_data['cedula']
             nombre = form.cleaned_data['nombre']
-            apellido = form.cleaned_data['apellido']
             telefono_uno = form.cleaned_data['telefono_uno']
             telefonos_dos = form.cleaned_data['telefonos_dos']
             valor_instalacion = form.cleaned_data['valor_instalacion']
@@ -163,13 +179,13 @@ class EditarCliente(LoginRequiredMixin, View):
             municipio = form.cleaned_data['municipio']
             equipos = form.cleaned_data['equipos']         
             tipo_instalacion = form.cleaned_data['tipo_instalacion']  
-            cap_megas = form.cleaned_data['cap_megas']  
+            cap_megas = form.cleaned_data['cap_megas'] 
             ap = form.cleaned_data['ap']  
+
 
             cliente.ip = ip
             cliente.cedula = cedula
             cliente.nombre = nombre
-            cliente.apellido = apellido
             cliente.telefono_uno = telefono_uno
             cliente.telefonos_dos = telefonos_dos
             cliente.valor_instalacion = valor_instalacion
@@ -180,8 +196,9 @@ class EditarCliente(LoginRequiredMixin, View):
             cliente.municipio = municipio
             cliente.equipos = equipos
             cliente.tipo_instalacion = tipo_instalacion
-            cliente.cap_megas = cap_megas
+            cliente.cap_megas = cap_megas            
             cliente.ap = ap
+      
             
             cliente.save()
             form = ClienteFormulario(instance=cliente)
@@ -259,7 +276,6 @@ class Eliminar(LoginRequiredMixin, View):
                 ip=cliente.ip,
                 cedula=cliente.cedula,
                 nombre=cliente.nombre,
-                apellido=cliente.apellido,
                 telefono_uno=cliente.telefono_uno,
                 telefonos_dos=cliente.telefonos_dos,
                 valor_instalacion=cliente.valor_instalacion,
@@ -271,6 +287,7 @@ class Eliminar(LoginRequiredMixin, View):
                 equipos=cliente.equipos,
                 tipo_instalacion=cliente.tipo_instalacion,
                 cap_megas=cliente.cap_megas,
+                nombre_tecnico=cliente.nombre_tecnico,
                 ap=cliente.ap
             )
             cliente_retirado.save()
@@ -333,7 +350,6 @@ class EliminarClienteRetirado(LoginRequiredMixin, View):
                 ip=cliente_retirado.ip,
                 cedula=cliente_retirado.cedula,
                 nombre=cliente_retirado.nombre,
-                apellido=cliente_retirado.apellido,
                 telefono_uno=cliente_retirado.telefono_uno,
                 telefonos_dos=cliente_retirado.telefonos_dos,
                 valor_instalacion=cliente_retirado.valor_instalacion,
@@ -345,6 +361,7 @@ class EliminarClienteRetirado(LoginRequiredMixin, View):
                 equipos=cliente_retirado.equipos,
                 tipo_instalacion=cliente_retirado.tipo_instalacion,
                 cap_megas=cliente_retirado.cap_megas,
+                nombre_tecnico=cliente_retirado.nombre_tecnico,
                 ap=cliente_retirado.ap
             )
             cliente_retirado.delete()
@@ -447,7 +464,6 @@ class GenerarFacturaPDF(LoginRequiredMixin,View):
         factura = Factura.objects.get(id=p)       
         data = { 
             'nombre':factura.cliente.nombre,
-            'apellido': factura.cliente.apellido,
             'cedula': factura.cliente.cedula,
             'detalle': factura.detalle,
             'valor_pago': factura.valor_pago,
@@ -580,31 +596,29 @@ class ReporteSuspendidos(LoginRequiredMixin, TemplateView):
         ws['A1'] = 'Cédula'
         ws['B1'] = 'Ip'
         ws['C1'] = 'Nombre'
-        ws['D1'] = 'Apellido'
-        ws['E1'] = 'Telefono'
-        ws['F1'] = 'Mensaje'
-        ws['G1'] = 'WhatsApp'
+        ws['D1'] = 'Telefono'
+        ws['E1'] = 'Mensaje'
+        ws['F1'] = 'WhatsApp'
         ws['A1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['B1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['C1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['D1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['E1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['F1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
-        ws['G1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+
 
         # Escribir los datos de los clientes
         for i, cliente in enumerate(clientes_suspendidos, start=2):
             ws.cell(row=i, column=1, value=cliente.cedula)
             ws.cell(row=i, column=2, value=cliente.ip)
             ws.cell(row=i, column=3, value=cliente.nombre)
-            ws.cell(row=i, column=4, value=cliente.apellido)
-            ws.cell(row=i, column=5, value=cliente.telefono_uno)
+            ws.cell(row=i, column=4, value=cliente.telefono_uno)
  
-            ws.cell(row=i, column=6, value='="⚠Estimado cliente {nombre} {apellido} queremos recordarle que su factura de internet  esta vencida, recuerde realizar su pago. Sí, ya realizo el pago POR FAVOR omita este mensaje."'.format(nombre=cliente.nombre, apellido=cliente.apellido))
+            ws.cell(row=i, column=5, value='="⚠Estimado cliente {nombre} queremos recordarle que su factura de internet  esta vencida, recuerde realizar su pago. Sí, ya realizo el pago POR FAVOR omita este mensaje."'.format(nombre=cliente.nombre))
 
             # Agregar la fórmula de WhatsApp para cada cliente
-            cell = ws.cell(row=i, column=7)
-            cell.value='=HYPERLINK("https://api.whatsapp.com/send?phone="&E{0}&"&text="&F{0}, "📲✔")'.format(i)
+            cell = ws.cell(row=i, column=6)
+            cell.value='=HYPERLINK("https://api.whatsapp.com/send?phone="&D{0}&"&text="&E{0}, "📲✔")'.format(i)
             cell.style = 'Hyperlink'  # Aplicar el estilo de hipervínculo al texto
 
         # Ajustar el ancho de las columnas
@@ -650,31 +664,29 @@ class ReporteREquipo(LoginRequiredMixin, TemplateView):
         ws['A1'] = 'Cédula'
         ws['B1'] = 'Ip'
         ws['C1'] = 'Nombre'
-        ws['D1'] = 'Apellido'
-        ws['E1'] = 'Telefono'
-        ws['F1'] = 'Mensaje'
-        ws['G1'] = 'WhatsApp'
+        ws['D1'] = 'Telefono'
+        ws['E1'] = 'Mensaje'
+        ws['F1'] = 'WhatsApp'
         ws['A1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['B1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['C1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['D1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['E1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['F1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
-        ws['G1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
+
 
         # Escribir los datos de los clientes
         for i, cliente in enumerate(clientes_Requipos, start=2):
             ws.cell(row=i, column=1, value=cliente.cedula)
             ws.cell(row=i, column=2, value=cliente.ip)
             ws.cell(row=i, column=3, value=cliente.nombre)
-            ws.cell(row=i, column=4, value=cliente.apellido)
-            ws.cell(row=i, column=5, value=cliente.telefono_uno)
+            ws.cell(row=i, column=4, value=cliente.telefono_uno)
  
-            ws.cell(row=i, column=6, value='="⚠Estimado cliente {nombre} {apellido} queremos infórmale que, debido a que lleva más de un mes en mora, la empresa enviará a recoger los equipos y así se dará por terminado el contrato."'.format(nombre=cliente.nombre, apellido=cliente.apellido))
+            ws.cell(row=i, column=5, value='="⚠Estimado cliente {nombre} queremos infórmale que, debido a que lleva más de un mes en mora, la empresa enviará a recoger los equipos y así se dará por terminado el contrato."'.format(nombre=cliente.nombre))
 
             # Agregar la fórmula de WhatsApp para cada cliente
-            cell = ws.cell(row=i, column=7)
-            cell.value='=HYPERLINK("https://api.whatsapp.com/send?phone="&E{0}&"&text="&F{0}, "📲✔")'.format(i)
+            cell = ws.cell(row=i, column=6)
+            cell.value='=HYPERLINK("https://api.whatsapp.com/send?phone="&D{0}&"&text="&E{0}, "📲✔")'.format(i)
             cell.style = 'Hyperlink'  # Aplicar el estilo de hipervínculo al texto
 
         # Ajustar el ancho de las columnas
@@ -721,11 +733,10 @@ class ReporteAp(LoginRequiredMixin, TemplateView):
         ws['A1'] = 'Cédula'
         ws['B1'] = 'Ip'
         ws['C1'] = 'Nombre'
-        ws['D1'] = 'Apellido'
-        ws['E1'] = 'Telefono'
-        ws['F1'] = 'Mensaje'
-        ws['G1'] = 'AP'
-        ws['H1'] = 'WhatsApp'
+        ws['D1'] = 'Telefono'
+        ws['E1'] = 'Mensaje'
+        ws['F1'] = 'AP'
+        ws['G1'] = 'WhatsApp'
         ws['A1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['B1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
         ws['C1'].font = Font(bold=True)  # Añadir formato negrita al encabezado
@@ -740,14 +751,13 @@ class ReporteAp(LoginRequiredMixin, TemplateView):
             ws.cell(row=i, column=1, value=cliente.cedula)
             ws.cell(row=i, column=2, value=cliente.ip)
             ws.cell(row=i, column=3, value=cliente.nombre)
-            ws.cell(row=i, column=4, value=cliente.apellido)
-            ws.cell(row=i, column=5, value=cliente.telefono_uno)
+            ws.cell(row=i, column=4, value=cliente.telefono_uno)
  
-            ws.cell(row=i, column=6, value='="⚠Estimado cliente {nombre} {apellido} queremos infórmale que estamos presentando fallas en su servicio de internet, estamos trabajando para solucionarlo."'.format(nombre=cliente.nombre, apellido=cliente.apellido))
-            ws.cell(row=i, column=7, value=cliente.ap.nombreAp)
+            ws.cell(row=i, column=5, value='="⚠Estimado cliente {nombre} queremos infórmale que estamos presentando fallas en su servicio de internet, estamos trabajando para solucionarlo."'.format(nombre=cliente.nombre))
+            ws.cell(row=i, column=6, value=cliente.ap.nombreAp)
             # Agregar la fórmula de WhatsApp para cada cliente
-            cell = ws.cell(row=i, column=8)
-            cell.value='=HYPERLINK("https://api.whatsapp.com/send?phone="&E{0}&"&text="&F{0}, "📲✔")'.format(i)
+            cell = ws.cell(row=i, column=7)
+            cell.value='=HYPERLINK("https://api.whatsapp.com/send?phone="&D{0}&"&text="&E{0}, "📲✔")'.format(i)
             cell.style = 'Hyperlink'  # Aplicar el estilo de hipervínculo al texto
 
         # Ajustar el ancho de las columnas

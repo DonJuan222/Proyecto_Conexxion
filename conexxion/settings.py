@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'core',
     'cliente',
     'import_export',
-
 ]
 
 MIDDLEWARE = [
